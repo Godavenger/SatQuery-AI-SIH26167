@@ -80,6 +80,36 @@ Benchmark results and the ablation/calibration/extended-coverage study are compi
 | `data/` | metrics JSONs (tracked) + large binary caches (fetched) |
 | `CHECKPOINT.md` | dated internal build log |
 
+## Known limitations & caveats
+
+Reported honestly rather than hidden:
+
+- **SAR coverage.** 6 of the 10 sites carry Sentinel-1 SAR; gangotri, rondonia,
+  creekfire and nile are optical-only (no S1 tile fetched — `scripts/fetch_sar_asf.py`
+  is ready but needs an Earthdata login). Fusion degrades to optical-only there and says so.
+- **Cross-signal reconciliation, not independent-specialist cross-examination.**
+  The deployed cross-check reconciles multiple signals *within* an answer (an
+  auditable spectral measurement vs a land-cover classifier vs the answer scorer;
+  optical vs SAR in fusion). The pipeline runs one specialist head per query, so the
+  cross-specialist conflict detector in `satquery/stage3/integrate.py` only activates
+  for queries routed through more than one head.
+- **Model stack.** Grounding/detection use spectral indices (NDWI/NDVI/NDBI/NBR) +
+  connected components; change is change-vector analysis; fusion is late fusion of the
+  two land-cover heads. There is **no object detector** — discrete-object queries
+  (ships, aircraft, vehicles) are abstained on by design. RemoteCLIP / SigLIP /
+  ChangeFormer / CLIPSeg+SAM are roadmap references, not the shipped build.
+- **Benchmarks.** RSVQA-LR, RSVQA-HR, VRSBench, CDVQA, LEVIR-CD (binary),
+  BigEarthNet fuse-IoU, VRSBench caption/grounding and four ablations are evaluated.
+  RSVQA-HR `test_phili` and LEVIR-CD SECOND (multi-class) are **not yet run**.
+- **Zero-shot vs supervised.** The joint scorer specialises in BigEarthNet semantics;
+  zero-shot transfer to foreign benchmarks is weak, so the supervised/adapted protocol
+  is the deployment setting (see `docs/SatQuery_AI_Benchmark_Results.pdf`).
+- **EuroSAT 97.78%** is historical (the original fine-tune); the current encoder's
+  linear probe is ~94.9%, with 97.7% kept as a joint-training replay check.
+- **Serving.** The FastAPI backend is **unauthenticated with open CORS** — localhost /
+  demo use only. The 3-D globe needs live NASA GIBS / Esri / USGS / OpenStreetMap
+  services; only the backend, models and vendored JS/fonts are offline-packaged.
+
 ## License
 
 See `LICENSE`. Vendored third-party assets under `docs/vendor/` (three.js, Inter &
