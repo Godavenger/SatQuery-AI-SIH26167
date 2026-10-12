@@ -1,0 +1,703 @@
+{
+  "router_v2_vs_v1_heldout_paraphrases": {
+    "claim": "trained router v2 beats rule router v1 on unseen paraphrases",
+    "n_queries": 38,
+    "n_dropped_as_seen": 0,
+    "router_v1_accuracy": 0.7105,
+    "router_v2_accuracy": 0.8947,
+    "improvement_points": 18.4,
+    "per_intent": {
+      "vqa": {
+        "n": 8,
+        "v1": 0.875,
+        "v2": 0.875
+      },
+      "describe": {
+        "n": 6,
+        "v1": 0.833,
+        "v2": 0.833
+      },
+      "ground": {
+        "n": 6,
+        "v1": 0.833,
+        "v2": 1.0
+      },
+      "change": {
+        "n": 6,
+        "v1": 0.833,
+        "v2": 0.667
+      },
+      "change-qa": {
+        "n": 6,
+        "v1": 0.0,
+        "v2": 1.0
+      },
+      "fuse": {
+        "n": 6,
+        "v1": 0.833,
+        "v2": 1.0
+      }
+    },
+    "confusion_v1": {
+      "vqa": {
+        "vqa": 7,
+        "describe": 1,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "describe": {
+        "vqa": 1,
+        "describe": 5,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "ground": {
+        "vqa": 0,
+        "describe": 1,
+        "ground": 5,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "change": {
+        "vqa": 1,
+        "describe": 0,
+        "ground": 0,
+        "change": 5,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "change-qa": {
+        "vqa": 2,
+        "describe": 0,
+        "ground": 0,
+        "change": 4,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "fuse": {
+        "vqa": 0,
+        "describe": 1,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 5
+      }
+    },
+    "confusion_v2": {
+      "vqa": {
+        "vqa": 7,
+        "describe": 1,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "describe": {
+        "vqa": 1,
+        "describe": 5,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "ground": {
+        "vqa": 0,
+        "describe": 0,
+        "ground": 6,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 0
+      },
+      "change": {
+        "vqa": 0,
+        "describe": 0,
+        "ground": 1,
+        "change": 4,
+        "change-qa": 0,
+        "fuse": 1
+      },
+      "change-qa": {
+        "vqa": 0,
+        "describe": 0,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 6,
+        "fuse": 0
+      },
+      "fuse": {
+        "vqa": 0,
+        "describe": 0,
+        "ground": 0,
+        "change": 0,
+        "change-qa": 0,
+        "fuse": 6
+      }
+    },
+    "rows": [
+      {
+        "query": "Roughly what share of this scene is tree canopy?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "describe"
+      },
+      {
+        "query": "Would you say this tile is mostly built-up or mostly green?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "Tell me whether any open water sits inside this frame.",
+        "gold": "vqa",
+        "v1": "describe",
+        "v2": "vqa"
+      },
+      {
+        "query": "Approximately how many separate lakes sit in this scene?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "Does bare rock show up anywhere in this single view?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "Is cultivated farmland the leading cover in this one image?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "What type of crop seems to be growing across this plot?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "Are snowfields anywhere to be seen in this picture?",
+        "gold": "vqa",
+        "v1": "vqa",
+        "v2": "vqa"
+      },
+      {
+        "query": "Walk me through everything this overhead shot contains.",
+        "gold": "describe",
+        "v1": "describe",
+        "v2": "describe"
+      },
+      {
+        "query": "Put the contents of this satellite frame into a sentence.",
+        "gold": "describe",
+        "v1": "describe",
+        "v2": "describe"
+      },
+      {
+        "query": "Characterise the terrain and features captured here.",
+        "gold": "describe",
+        "v1": "describe",
+        "v2": "describe"
+      },
+      {
+        "query": "What sort of place would you say this image depicts?",
+        "gold": "describe",
+        "v1": "vqa",
+        "v2": "describe"
+      },
+      {
+        "query": "Give a plain-language rundown of this aerial view.",
+        "gold": "describe",
+        "v1": "describe",
+        "v2": "describe"
+      },
+      {
+        "query": "Sum up the land use captured in this single tile.",
+        "gold": "describe",
+        "v1": "describe",
+        "v2": "vqa"
+      },
+      {
+        "query": "Draw a box around the flooded ground in this image.",
+        "gold": "ground",
+        "v1": "ground",
+        "v2": "ground"
+      },
+      {
+        "query": "Point me to exactly where the vegetation sits here.",
+        "gold": "ground",
+        "v1": "describe",
+        "v2": "ground"
+      },
+      {
+        "query": "Outline the built-up patches on top of the imagery.",
+        "gold": "ground",
+        "v1": "ground",
+        "v2": "ground"
+      },
+      {
+        "query": "Mark the stretch of river visible in this scene.",
+        "gold": "ground",
+        "v1": "ground",
+        "v2": "ground"
+      },
+      {
+        "query": "Pinpoint the location of any bare, sandy ground.",
+        "gold": "ground",
+        "v1": "ground",
+        "v2": "ground"
+      },
+      {
+        "query": "Show me where the cropland lies in this tile.",
+        "gold": "ground",
+        "v1": "ground",
+        "v2": "ground"
+      },
+      {
+        "query": "Between the two passes, what shifted and whereabouts?",
+        "gold": "change",
+        "v1": "change",
+        "v2": "change"
+      },
+      {
+        "query": "Contrast the earlier capture with the later one.",
+        "gold": "change",
+        "v1": "change",
+        "v2": "fuse"
+      },
+      {
+        "query": "Lay out how the scene differs across the two dates.",
+        "gold": "change",
+        "v1": "change",
+        "v2": "change"
+      },
+      {
+        "query": "Which parts of the landscape are not the same anymore?",
+        "gold": "change",
+        "v1": "vqa",
+        "v2": "ground"
+      },
+      {
+        "query": "Tell me what is no longer identical between both frames.",
+        "gold": "change",
+        "v1": "change",
+        "v2": "change"
+      },
+      {
+        "query": "Compare the before image against the after image.",
+        "gold": "change",
+        "v1": "change",
+        "v2": "change"
+      },
+      {
+        "query": "Across the two dates, did the water spread out or pull back?",
+        "gold": "change-qa",
+        "v1": "change",
+        "v2": "change-qa"
+      },
+      {
+        "query": "Has the urban footprint grown or gotten smaller over time?",
+        "gold": "change-qa",
+        "v1": "change",
+        "v2": "change-qa"
+      },
+      {
+        "query": "Did the forest cover expand or recede between the passes?",
+        "gold": "change-qa",
+        "v1": "change",
+        "v2": "change-qa"
+      },
+      {
+        "query": "By how many points did the cropland share move up or down?",
+        "gold": "change-qa",
+        "v1": "vqa",
+        "v2": "change-qa"
+      },
+      {
+        "query": "Is there more or less bare ground than at the earlier date?",
+        "gold": "change-qa",
+        "v1": "change",
+        "v2": "change-qa"
+      },
+      {
+        "query": "Did the built-up fraction climb, fall, or hold steady?",
+        "gold": "change-qa",
+        "v1": "vqa",
+        "v2": "change-qa"
+      },
+      {
+        "query": "Bring the radar and optical captures together to map water.",
+        "gold": "fuse",
+        "v1": "fuse",
+        "v2": "fuse"
+      },
+      {
+        "query": "Read the microwave and multispectral scenes jointly.",
+        "gold": "fuse",
+        "v1": "fuse",
+        "v2": "fuse"
+      },
+      {
+        "query": "Use both sensors at once to pick out settlements and water.",
+        "gold": "fuse",
+        "v1": "fuse",
+        "v2": "fuse"
+      },
+      {
+        "query": "Merge the SAR return with the optical to see through cloud.",
+        "gold": "fuse",
+        "v1": "describe",
+        "v2": "fuse"
+      },
+      {
+        "query": "Combine radar with the visible bands for the classification.",
+        "gold": "fuse",
+        "v1": "fuse",
+        "v2": "fuse"
+      },
+      {
+        "query": "Fuse the all-weather and optical data into one water map.",
+        "gold": "fuse",
+        "v1": "fuse",
+        "v2": "fuse"
+      }
+    ],
+    "_seconds": 6.1
+  },
+  "fusion_vs_optical_cloud_occluded": {
+    "claim": "optical+SAR fusion is more robust than optical-only under cloud",
+    "n_sites": 5,
+    "sites_used": [
+      "assam",
+      "sundarbans",
+      "dubai",
+      "kaziranga",
+      "pin23260_77410"
+    ],
+    "cloud_fractions": [
+      0.0,
+      0.2,
+      0.4,
+      0.6,
+      0.8
+    ],
+    "mean_by_cloud_fraction": {
+      "0.0": {
+        "optical_iou": 1.0,
+        "optical_recall": 1.0,
+        "fusion_iou": 1.0,
+        "fusion_recall": 1.0
+      },
+      "0.2": {
+        "optical_iou": 0.6295,
+        "optical_recall": 0.6295,
+        "fusion_iou": 0.836,
+        "fusion_recall": 0.8892
+      },
+      "0.4": {
+        "optical_iou": 0.4436,
+        "optical_recall": 0.4436,
+        "fusion_iou": 0.7008,
+        "fusion_recall": 0.7775
+      },
+      "0.6": {
+        "optical_iou": 0.3635,
+        "optical_recall": 0.3635,
+        "fusion_iou": 0.667,
+        "fusion_recall": 0.7539
+      },
+      "0.8": {
+        "optical_iou": 0.1662,
+        "optical_recall": 0.1662,
+        "fusion_iou": 0.5381,
+        "fusion_recall": 0.6395
+      }
+    },
+    "headline": "at 80% cloud, fusion holds 64% water recall vs 17% optical-only",
+    "per_site": [
+      {
+        "site": "assam",
+        "gt_water_pct": 0.02,
+        "by_cloud": {
+          "0.0": {
+            "optical_iou": 1.0,
+            "optical_recall": 1.0,
+            "fusion_iou": 1.0,
+            "fusion_recall": 1.0
+          },
+          "0.2": {
+            "optical_iou": 0.9,
+            "optical_recall": 0.9,
+            "fusion_iou": 0.9,
+            "fusion_recall": 0.9
+          },
+          "0.4": {
+            "optical_iou": 0.52,
+            "optical_recall": 0.52,
+            "fusion_iou": 0.52,
+            "fusion_recall": 0.52
+          },
+          "0.6": {
+            "optical_iou": 0.5,
+            "optical_recall": 0.5,
+            "fusion_iou": 0.5,
+            "fusion_recall": 0.5
+          },
+          "0.8": {
+            "optical_iou": 0.04,
+            "optical_recall": 0.04,
+            "fusion_iou": 0.04,
+            "fusion_recall": 0.04
+          }
+        }
+      },
+      {
+        "site": "delhi",
+        "skipped": "little/no water",
+        "gt_px": 24
+      },
+      {
+        "site": "sundarbans",
+        "gt_water_pct": 38.19,
+        "by_cloud": {
+          "0.0": {
+            "optical_iou": 1.0,
+            "optical_recall": 1.0,
+            "fusion_iou": 1.0,
+            "fusion_recall": 1.0
+          },
+          "0.2": {
+            "optical_iou": 0.9151,
+            "optical_recall": 0.9151,
+            "fusion_iou": 0.9323,
+            "fusion_recall": 0.9989
+          },
+          "0.4": {
+            "optical_iou": 0.7604,
+            "optical_recall": 0.7604,
+            "fusion_iou": 0.9165,
+            "fusion_recall": 0.9926
+          },
+          "0.6": {
+            "optical_iou": 0.5799,
+            "optical_recall": 0.5799,
+            "fusion_iou": 0.9078,
+            "fusion_recall": 0.9854
+          },
+          "0.8": {
+            "optical_iou": 0.3142,
+            "optical_recall": 0.3142,
+            "fusion_iou": 0.9032,
+            "fusion_recall": 0.9819
+          }
+        }
+      },
+      {
+        "site": "punjab",
+        "skipped": "little/no water",
+        "gt_px": 34
+      },
+      {
+        "site": "dubai",
+        "gt_water_pct": 0.9,
+        "by_cloud": {
+          "0.0": {
+            "optical_iou": 1.0,
+            "optical_recall": 1.0,
+            "fusion_iou": 1.0,
+            "fusion_recall": 1.0
+          },
+          "0.2": {
+            "optical_iou": 0.1142,
+            "optical_recall": 0.1142,
+            "fusion_iou": 0.5157,
+            "fusion_recall": 0.6644
+          },
+          "0.4": {
+            "optical_iou": 0.0514,
+            "optical_recall": 0.0514,
+            "fusion_iou": 0.3871,
+            "fusion_recall": 0.6071
+          },
+          "0.6": {
+            "optical_iou": 0.0497,
+            "optical_recall": 0.0497,
+            "fusion_iou": 0.3541,
+            "fusion_recall": 0.6054
+          },
+          "0.8": {
+            "optical_iou": 0.0304,
+            "optical_recall": 0.0304,
+            "fusion_iou": 0.2916,
+            "fusion_recall": 0.586
+          }
+        }
+      },
+      {
+        "site": "kaziranga",
+        "gt_water_pct": 1.75,
+        "by_cloud": {
+          "0.0": {
+            "optical_iou": 1.0,
+            "optical_recall": 1.0,
+            "fusion_iou": 1.0,
+            "fusion_recall": 1.0
+          },
+          "0.2": {
+            "optical_iou": 0.8509,
+            "optical_recall": 0.8509,
+            "fusion_iou": 0.8663,
+            "fusion_recall": 0.9122
+          },
+          "0.4": {
+            "optical_iou": 0.7241,
+            "optical_recall": 0.7241,
+            "fusion_iou": 0.7414,
+            "fusion_recall": 0.8209
+          },
+          "0.6": {
+            "optical_iou": 0.5923,
+            "optical_recall": 0.5923,
+            "fusion_iou": 0.6548,
+            "fusion_recall": 0.7518
+          },
+          "0.8": {
+            "optical_iou": 0.4365,
+            "optical_recall": 0.4365,
+            "fusion_iou": 0.5553,
+            "fusion_recall": 0.6799
+          }
+        }
+      },
+      {
+        "site": "pin23260_77410",
+        "gt_water_pct": 7.76,
+        "by_cloud": {
+          "0.0": {
+            "optical_iou": 1.0,
+            "optical_recall": 1.0,
+            "fusion_iou": 1.0,
+            "fusion_recall": 1.0
+          },
+          "0.2": {
+            "optical_iou": 0.3671,
+            "optical_recall": 0.3671,
+            "fusion_iou": 0.9654,
+            "fusion_recall": 0.9705
+          },
+          "0.4": {
+            "optical_iou": 0.1623,
+            "optical_recall": 0.1623,
+            "fusion_iou": 0.9393,
+            "fusion_recall": 0.9469
+          },
+          "0.6": {
+            "optical_iou": 0.0955,
+            "optical_recall": 0.0955,
+            "fusion_iou": 0.9181,
+            "fusion_recall": 0.9269
+          },
+          "0.8": {
+            "optical_iou": 0.0101,
+            "optical_recall": 0.0101,
+            "fusion_iou": 0.9005,
+            "fusion_recall": 0.9099
+          }
+        }
+      }
+    ],
+    "_seconds": 3.7
+  },
+  "gsd_conditioning_on_vs_off": {
+    "claim": "the GSD scalar is wired through and makes one set of weights behave differently across 0.15-10 m; at a fixed resolution it is a constant offset a linear head absorbs (so fixed-GSD accuracy is ~unchanged, by design)",
+    "n_train": 16200,
+    "n_test": 5400,
+    "linear_probe_acc_cond_off": 0.9489,
+    "linear_probe_acc_cond_on_10m": 0.9485,
+    "fixed_gsd_accuracy_delta_points": -0.04,
+    "offset_geometry": {
+      "0.15": {
+        "offset_norm": 2.484,
+        "pct_of_feature_norm": 79.12,
+        "cosine_to_10m": 0.4281
+      },
+      "0.3": {
+        "offset_norm": 2.177,
+        "pct_of_feature_norm": 69.34,
+        "cosine_to_10m": 0.5142
+      },
+      "0.65": {
+        "offset_norm": 1.873,
+        "pct_of_feature_norm": 59.63,
+        "cosine_to_10m": 0.6322
+      },
+      "1.0": {
+        "offset_norm": 1.726,
+        "pct_of_feature_norm": 54.97,
+        "cosine_to_10m": 0.7073
+      },
+      "2.0": {
+        "offset_norm": 1.538,
+        "pct_of_feature_norm": 48.97,
+        "cosine_to_10m": 0.833
+      },
+      "5.0": {
+        "offset_norm": 1.41,
+        "pct_of_feature_norm": 44.91,
+        "cosine_to_10m": 0.9659
+      },
+      "10.0": {
+        "offset_norm": 1.423,
+        "pct_of_feature_norm": 45.32,
+        "cosine_to_10m": 1.0
+      }
+    },
+    "mean_feature_norm": 3.14,
+    "cross_resolution_flip_rate_vs_10m_cond_on": {
+      "0.15": 0.0167,
+      "0.3": 0.0135,
+      "0.65": 0.0102,
+      "1.0": 0.0081,
+      "2.0": 0.0056,
+      "5.0": 0.0015,
+      "10.0": 0.0
+    },
+    "cross_resolution_sweep_accuracy_cond_on": {
+      "0.15": 0.9506,
+      "0.3": 0.9502,
+      "0.65": 0.9498,
+      "1.0": 0.9489,
+      "2.0": 0.9498,
+      "5.0": 0.9487,
+      "10.0": 0.9485
+    },
+    "cond_off_flip_rate_any_gsd": 0.0,
+    "notes": [
+      "the ft_cls_head EuroSAT 97.78% is stale -- the joint encoder passes changed opt_enc after that head was fit; a fresh linear probe on the current encoder is reported instead",
+      "conditioner OFF has no path from GSD to output (0% flips at any resolution); ON flips a non-zero fraction -- the measured GSD-awareness the design claims"
+    ],
+    "_seconds": 201.3
+  },
+  "change_qa_mask_vs_generative_cdvqa": {
+    "claim": "per-class mask-derived change-qa vs a learned/generative head on CDVQA change_or_not (class-named questions)",
+    "question_type": "change_or_not (class-named)",
+    "n_test": 3493,
+    "majority_class_floor": 0.5417,
+    "mask_derived_accuracy": 0.5374,
+    "generative_scorer_accuracy_zero_shot": 0.592,
+    "delta_mask_minus_generative_points": -5.5,
+    "calibrated_area_delta_threshold": 0.015,
+    "generative_on_direction_types": {
+      "n": 2339,
+      "accuracy": 0.4173
+    },
+    "note": "on RGB the per-class proxy has no NDWI/NDVI to lean on, so it sits near the majority floor; the same mask-derived method is auditable and stronger on the system's multispectral tiles, where per-class spectral masks are real (see ablation 1)",
+    "_seconds": 93.2
+  }
+}

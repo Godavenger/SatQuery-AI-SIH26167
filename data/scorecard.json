@@ -1,0 +1,136 @@
+{
+  "n_queries": 5,
+  "router_v1_accuracy": 1.0,
+  "router_v2_accuracy": 1.0,
+  "router_improvement": 0.0,
+  "pipeline_accuracy_on_answered": 1.0,
+  "abstention_rate": 0.0,
+  "site": "assam",
+  "confusion_matrix_v2": {
+    "vqa": {
+      "vqa": 0,
+      "describe": 0,
+      "ground": 0,
+      "change": 0,
+      "change-qa": 0,
+      "fuse": 0
+    },
+    "describe": {
+      "vqa": 0,
+      "describe": 1,
+      "ground": 0,
+      "change": 0,
+      "change-qa": 0,
+      "fuse": 0
+    },
+    "ground": {
+      "vqa": 0,
+      "describe": 0,
+      "ground": 1,
+      "change": 0,
+      "change-qa": 0,
+      "fuse": 0
+    },
+    "change": {
+      "vqa": 0,
+      "describe": 0,
+      "ground": 0,
+      "change": 1,
+      "change-qa": 0,
+      "fuse": 0
+    },
+    "change-qa": {
+      "vqa": 0,
+      "describe": 0,
+      "ground": 0,
+      "change": 0,
+      "change-qa": 1,
+      "fuse": 0
+    },
+    "fuse": {
+      "vqa": 0,
+      "describe": 0,
+      "ground": 0,
+      "change": 0,
+      "change-qa": 0,
+      "fuse": 1
+    }
+  },
+  "rows": [
+    {
+      "query": "Describe the land-cover and major objects visible in this image.",
+      "expected": "describe",
+      "v1_pred": "describe",
+      "v1_conf": 0.709,
+      "v2_pred": "describe",
+      "v2_conf": 0.709,
+      "v1_correct": true,
+      "v2_correct": true,
+      "pipeline_intent": "describe",
+      "pipeline_conf": 0.89,
+      "pipeline_abstained": false,
+      "pipeline_text": "This s2 msi scene at 10.0 m GSD is read by the learned land-cover classifier as inland waters (p=0.9",
+      "mode": "single"
+    },
+    {
+      "query": "Highlight the water body referred to in the query.",
+      "expected": "ground",
+      "v1_pred": "ground",
+      "v1_conf": 0.94,
+      "v2_pred": "ground",
+      "v2_conf": 0.94,
+      "v1_correct": true,
+      "v2_correct": true,
+      "pipeline_intent": "ground",
+      "pipeline_conf": 0.467,
+      "pipeline_abstained": false,
+      "pipeline_text": "No significant 'water' region found in the current tile. Note: the learned classifier expects it (p=",
+      "mode": "single"
+    },
+    {
+      "query": "What changed between these two dates, and where did the change occur?",
+      "expected": "change",
+      "v1_pred": "change",
+      "v1_conf": 0.891,
+      "v2_pred": "change",
+      "v2_conf": 0.891,
+      "v1_correct": true,
+      "v2_correct": true,
+      "pipeline_intent": "change",
+      "pipeline_conf": 0.745,
+      "pipeline_abstained": false,
+      "pipeline_text": "Bi-temporal pair (2024-02-10 -> 2024-11-21, 9.4 months apart). Class changes (dead-band 2pp): bare s",
+      "mode": "bitemporal"
+    },
+    {
+      "query": "Has the built-up area increased, decreased, or remained unchanged?",
+      "expected": "change-qa",
+      "v1_pred": "change-qa",
+      "v1_conf": 0.645,
+      "v2_pred": "change-qa",
+      "v2_conf": 0.645,
+      "v1_correct": true,
+      "v2_correct": true,
+      "pipeline_intent": "change-qa",
+      "pipeline_conf": 0.774,
+      "pipeline_abstained": false,
+      "pipeline_text": "The built up class decreased: 15.4% -> 6.3% (delta -9.1 pp).",
+      "mode": "bitemporal"
+    },
+    {
+      "query": "Use the optical and SAR images together to identify built-up and water-covered regions.",
+      "expected": "fuse",
+      "v1_pred": "fuse",
+      "v1_conf": 0.843,
+      "v2_pred": "fuse",
+      "v2_conf": 0.843,
+      "v1_correct": true,
+      "v2_correct": true,
+      "pipeline_intent": "fuse",
+      "pipeline_conf": 0.845,
+      "pipeline_abstained": false,
+      "pipeline_text": "Optical+SAR fusion result. Classes detected: water 0.0%, vegetation 71.5%, built up 15.4%, bare soil",
+      "mode": "fuse"
+    }
+  ]
+}

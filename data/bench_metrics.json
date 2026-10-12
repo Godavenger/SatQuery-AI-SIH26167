@@ -1,0 +1,107 @@
+{
+  "rsvqa_lr": {
+    "benchmark": "RSVQA-LR test",
+    "n_scored": 8617,
+    "n_skipped": 1387,
+    "accuracy": 0.4713,
+    "accuracy_by_type": {
+      "rural_urban": 0.44,
+      "presence": 0.2497,
+      "comp": 0.6647,
+      "count": 0.3968
+    },
+    "images": "100 images"
+  },
+  "rsvqa_lr_zero_shot": {
+    "accuracy": 0.4144,
+    "n_scored": 8617,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "rural_urban": 0.44,
+      "presence": 0.4112,
+      "comp": 0.5447,
+      "count": 0.0846
+    },
+    "images": "672 images",
+    "benchmark": "RSVQA-LR"
+  },
+  "rsvqa_lr_supervised": {
+    "accuracy": 0.8083,
+    "n_scored": 8617,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "rural_urban": 0.83,
+      "presence": 0.9069,
+      "comp": 0.8661,
+      "count": 0.4718
+    },
+    "images": "672 images",
+    "benchmark": "RSVQA-LR"
+  },
+  "vrsbench_zero_shot": {
+    "accuracy": 0.289,
+    "n_scored": 37409,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "object category": 0.2275,
+      "object position": 0.2589,
+      "scene type": 0.2358,
+      "object existence": 0.3436,
+      "object direction": 0.2075,
+      "object shape": 0.2115,
+      "object quantity": 0.4156,
+      "object color": 0.2003,
+      "image": 0.2489,
+      "object size": 0.3027,
+      "reasoning": 0.2849,
+      "rural or urban": 0.1119
+    },
+    "images": "9349 images",
+    "benchmark": "VRSBench"
+  },
+  "cdvqa_zero_shot": {
+    "accuracy": 0.5219,
+    "n_scored": 5832,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "change_or_not": 0.592,
+      "increase_or_not": 0.4755,
+      "decrease_or_not": 0.3597
+    },
+    "images": "5832 pairs",
+    "benchmark": "CDVQA"
+  },
+  "vrsbench_supervised": {
+    "accuracy": 0.8384,
+    "n_scored": 37409,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "object category": 0.7733,
+      "object position": 0.7524,
+      "scene type": 0.833,
+      "object existence": 0.9759,
+      "object direction": 0.5912,
+      "object shape": 0.7203,
+      "object quantity": 0.8657,
+      "object color": 0.7701,
+      "image": 0.9265,
+      "object size": 0.8249,
+      "reasoning": 0.9069,
+      "rural or urban": 0.8678
+    },
+    "images": "9349 images",
+    "benchmark": "VRSBench"
+  },
+  "cdvqa_supervised": {
+    "accuracy": 0.7718,
+    "n_scored": 5832,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "change_or_not": 0.8194,
+      "increase_or_not": 0.6784,
+      "decrease_or_not": 0.7228
+    },
+    "images": "5832 pairs",
+    "benchmark": "CDVQA"
+  }
+}

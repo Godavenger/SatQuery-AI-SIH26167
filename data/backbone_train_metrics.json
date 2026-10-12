@@ -1,0 +1,25 @@
+{
+  "dataset": "EuroSAT (Sentinel-2, 10 classes, 13-band all-bands)",
+  "train_size": 16200,
+  "val_size": 5400,
+  "test_size": 5400,
+  "epochs": 6,
+  "batch": 32,
+  "encoder_init": "torchgeo SENTINEL2_ALL_MOCO ResNet50",
+  "best_val_accuracy": 0.9769,
+  "test_accuracy": 0.9778,
+  "per_class_recall": {
+    "Annual Crop": 0.9933,
+    "Forest": 0.9934,
+    "Herbaceous Vegetation": 0.9756,
+    "Highway": 0.9657,
+    "Industrial Buildings": 0.9661,
+    "Pasture": 0.9545,
+    "Permanent Crop": 0.9368,
+    "Residential Buildings": 0.9928,
+    "River": 0.9887,
+    "Sea & Lake": 0.9967
+  },
+  "train_seconds": 650.3,
+  "gsd_cond": "trained (new module)"
+}

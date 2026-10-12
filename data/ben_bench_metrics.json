@@ -1,0 +1,21 @@
+{
+  "benchmark": "BigEarthNet.txt bench split (manually verified)",
+  "arch": "v2",
+  "n_scored": 11703,
+  "n_unparseable": 774,
+  "accuracy": 0.6504,
+  "accuracy_by_type": {
+    "binary": 0.6903,
+    "mcq": 0.6008
+  },
+  "accuracy_by_category": {
+    "adjacency": 0.5904,
+    "area": 0.7102,
+    "count": 0.7069,
+    "presence": 0.6342,
+    "country": 0.7508,
+    "relative pos": 0.3023,
+    "climate zone": 0.8752,
+    "season": 0.7946
+  }
+}

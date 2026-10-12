@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import pypdf; print\\('pypdf ok'\\)\")",
+      "Bash(python -c \"import PyPDF2; print\\('PyPDF2 ok'\\)\")",
+      "Bash(python -c \"import fitz; print\\('pymupdf ok'\\)\")",
+      "Bash(python -c \"import pdfplumber; print\\('pdfplumber ok'\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python -)",
+      "Bash(python -V)",
+      "Bash(pip list *)",
+      "Bash(python -c \"import torch;print\\('torch',torch.__version__,'cuda',torch.cuda.is_available\\(\\)\\)\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://pypi.org/simple/ --max-time 8)",
+      "WebFetch(domain:www.sih.gov.in)",
+      "Bash(printf '\"\"\"SatQuery AI - SIH26167 pipeline.\"\"\"\\\\n__version__ = \"0.1.0\"\\\\n')",
+      "Bash(printf '\"\"\"Stage 0 - ingest, sensor abstraction, normalization.\"\"\"\\\\nfrom .profiles import *  # noqa\\\\nfrom .ingest import *  # noqa\\\\n')",
+      "Bash(curl -s --max-time 15 \"https://earth-search.aws.element84.com/v1/collections\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\([c['id'] for c in d.get\\('collections',[]\\)]\\)\")",
+      "Bash(curl -s --max-time 15 -o /dev/null -w \"%{http_code}\\\\n\" \"https://planetarycomputer.microsoft.com/api/stac/v1/collections/sentinel-1-rtc\")",
+      "Bash(python -c \"import pystac_client;print\\('yes'\\)\")",
+      "Bash(pip install *)",
+      "Bash(python -c \"import pystac_client; print\\('pystac_client', pystac_client.__version__\\)\")",
+      "Bash(timeout 600 python scripts/fetch_data.py --sites assam)",
+      "Bash(python -m uvicorn satquery.api:app --port 7860 --reload)",
+      "Bash(curl -s http://localhost:7860/health)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('status:', d['status']\\); print\\('tools:', [t['name'] for t in d['tools']]\\)\")",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('task:',d['task']\\); print\\('conf:',d['confidence']\\); print\\('abstained:',d['abstained']\\); print\\('model:',d['model']\\); print\\('report_url:',d['report_url']\\); print\\('answer:',d['answer'][:120]\\)\")",
+      "Bash(curl -s http://localhost:7860/sites)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(k, 's2='+str\\(len\\(v['s2']\\)\\), 's1='+str\\(len\\(v['s1']\\)\\)\\) for k,v in d.items\\(\\)]\")",
+      "Bash(mkdir -p docs/Prototype)",
+      "Bash(mkdir -p models)",
+      "Bash(python scripts/run_eval.py --quick)",
+      "Bash(python -c \"import satquery\")",
+      "Bash(set PYTHONPATH=.)",
+      "Bash(python scripts/make_demo_images.py)",
+      "Bash(python scripts/edit_ppt.py)",
+      "Bash(tasklist //FI \"IMAGENAME eq POWERPNT.EXE\")",
+      "Bash(attrib SatQuery_AI_SIH26167_Idea_Submission.pptx)",
+      "Bash(python scripts/rebuild_slide1.py)"
+    ]
+  }
+}

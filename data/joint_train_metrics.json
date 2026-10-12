@@ -1,0 +1,300 @@
+{
+  "history": [
+    {
+      "vqa_acc": 0.701920321008885,
+      "vqa_binary": [
+        2658,
+        3665
+      ],
+      "vqa_mcq": [
+        2240,
+        3313
+      ],
+      "s2_exact": 0.13276231263383298,
+      "s1_exact": 0.10920770877944326,
+      "euro_acc": null,
+      "composite": 0.31463011414072045,
+      "epoch": 1,
+      "vqa_train_loss": 0.3517,
+      "epoch_seconds": 208.0,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3388,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7215534537116652,
+      "vqa_binary": [
+        2721,
+        3665
+      ],
+      "vqa_mcq": [
+        2314,
+        3313
+      ],
+      "s2_exact": 0.14775160599571735,
+      "s1_exact": 0.16274089935760172,
+      "euro_acc": null,
+      "composite": 0.34401531968832816,
+      "epoch": 2,
+      "vqa_train_loss": 0.3426,
+      "epoch_seconds": 180.8,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3392,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7003439380911436,
+      "vqa_binary": [
+        2675,
+        3665
+      ],
+      "vqa_mcq": [
+        2212,
+        3313
+      ],
+      "s2_exact": 0.15631691648822268,
+      "s1_exact": 0.14132762312633834,
+      "euro_acc": null,
+      "composite": 0.33266282590190155,
+      "epoch": 3,
+      "vqa_train_loss": 0.3283,
+      "epoch_seconds": 179.0,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3473,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7086557752937804,
+      "vqa_binary": [
+        2681,
+        3665
+      ],
+      "vqa_mcq": [
+        2264,
+        3313
+      ],
+      "s2_exact": 0.14989293361884368,
+      "s1_exact": 0.14775160599571735,
+      "euro_acc": null,
+      "composite": 0.33543343830278055,
+      "epoch": 4,
+      "vqa_train_loss": 0.3189,
+      "epoch_seconds": 179.2,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3479,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7194038406420178,
+      "vqa_binary": [
+        2719,
+        3665
+      ],
+      "vqa_mcq": [
+        2301,
+        3313
+      ],
+      "s2_exact": 0.1349036402569593,
+      "s1_exact": 0.13276231263383298,
+      "euro_acc": null,
+      "composite": 0.3290232645109367,
+      "epoch": 5,
+      "vqa_train_loss": 0.3094,
+      "epoch_seconds": 225.5,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3421,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7173975351103468,
+      "vqa_binary": [
+        2708,
+        3665
+      ],
+      "vqa_mcq": [
+        2298,
+        3313
+      ],
+      "s2_exact": 0.14132762312633834,
+      "s1_exact": 0.15417558886509636,
+      "euro_acc": null,
+      "composite": 0.3376335823672605,
+      "epoch": 6,
+      "vqa_train_loss": 0.3011,
+      "epoch_seconds": 235.7,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3449,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.6937517913442247,
+      "vqa_binary": [
+        2652,
+        3665
+      ],
+      "vqa_mcq": [
+        2189,
+        3313
+      ],
+      "s2_exact": 0.12205567451820129,
+      "s1_exact": 0.13276231263383298,
+      "euro_acc": null,
+      "composite": 0.3161899261654197,
+      "epoch": 7,
+      "vqa_train_loss": 0.3024,
+      "epoch_seconds": 240.6,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3336,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.6895958727429062,
+      "vqa_binary": [
+        2598,
+        3665
+      ],
+      "vqa_mcq": [
+        2214,
+        3313
+      ],
+      "s2_exact": 0.11349036402569593,
+      "s1_exact": 0.13704496788008566,
+      "euro_acc": null,
+      "composite": 0.3133770682162293,
+      "epoch": 8,
+      "vqa_train_loss": 0.291,
+      "epoch_seconds": 243.0,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3434,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7641157924906851,
+      "vqa_binary": [
+        2816,
+        3665
+      ],
+      "vqa_mcq": [
+        2516,
+        3313
+      ],
+      "s2_exact": 0.15631691648822268,
+      "s1_exact": 0.11991434689507495,
+      "euro_acc": null,
+      "composite": 0.34678235195799423,
+      "epoch": 9,
+      "vqa_train_loss": 0.2815,
+      "epoch_seconds": 241.1,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3429,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7012037833190026,
+      "vqa_binary": [
+        2646,
+        3665
+      ],
+      "vqa_mcq": [
+        2247,
+        3313
+      ],
+      "s2_exact": 0.12419700214132762,
+      "s1_exact": 0.11349036402569593,
+      "euro_acc": null,
+      "composite": 0.31296371649534205,
+      "epoch": 10,
+      "vqa_train_loss": 0.2785,
+      "epoch_seconds": 243.4,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3379,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.729292060762396,
+      "vqa_binary": [
+        2727,
+        3665
+      ],
+      "vqa_mcq": [
+        2362,
+        3313
+      ],
+      "s2_exact": 0.14346895074946467,
+      "s1_exact": 0.13704496788008566,
+      "euro_acc": null,
+      "composite": 0.33660199313064876,
+      "epoch": 11,
+      "vqa_train_loss": 0.2663,
+      "epoch_seconds": 239.7,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3360,
+        "euro": 0
+      }
+    },
+    {
+      "vqa_acc": 0.7542275723703067,
+      "vqa_binary": [
+        2784,
+        3665
+      ],
+      "vqa_mcq": [
+        2479,
+        3313
+      ],
+      "s2_exact": 0.14775160599571735,
+      "s1_exact": 0.11991434689507495,
+      "euro_acc": null,
+      "composite": 0.340631175087033,
+      "epoch": 12,
+      "vqa_train_loss": 0.2648,
+      "epoch_seconds": 243.7,
+      "aux_batches": {
+        "s2": 9856,
+        "s1": 3523,
+        "euro": 0
+      }
+    }
+  ],
+  "best_epoch": 9,
+  "best_composite": 0.3468,
+  "config": {
+    "epochs": 12,
+    "vqa_patch_batch": 6,
+    "lulc_batch": 16,
+    "euro_batch": 16,
+    "enc_lr": 6e-06,
+    "head_lr": 0.0005,
+    "val_frac": 0.08,
+    "val_pids_file": "data/ben_txt/val_pids.json",
+    "init_from": "models/joint_ckpt/pass2_best.pth",
+    "band_dropout": 0.25,
+    "rgb_stretch": 0.2,
+    "qcap": 160,
+    "limit_patches": 0,
+    "smoke": false,
+    "resume": false,
+    "no_eurosat": true
+  }
+}

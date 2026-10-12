@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Large binary data (fetched via scripts/fetch_*.py — not committed)
+data/tile_cache/
+data/eurosat/
+data/bench/
+data/ben_txt/
+data/ben_parts/
+data/raw/
+data/runs/
+data/rehearsal/
+# keep the small machine-readable metrics JSONs — they feed the report PDFs:
+!data/*.json
+# but not large derived stats artifacts:
+data/*.parquet
+
+# Trained model weights (large; distributed separately)
+models/*.pth
+models/joint_ckpt/
+models/onnx/*.onnx
+models/*.pkl
+
+# Logs & scratch
+*.log
+_ml_test.txt
+data/_*.json
+data/_*.jpg
+data/_*.png
+data/_*.xml
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.claude/settings.local.json

@@ -1,0 +1,14 @@
+{
+  "cdvqa_supervised": {
+    "accuracy": 0.5478,
+    "n_scored": 115,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "change_or_not": 0.4366,
+      "increase_or_not": 0.75,
+      "decrease_or_not": 0.7083
+    },
+    "images": "115 pairs",
+    "benchmark": "CDVQA"
+  }
+}

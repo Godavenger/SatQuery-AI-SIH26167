@@ -1,0 +1,31 @@
+{
+  "rsvqa_hr_zero_shot": {
+    "accuracy": 0.4102,
+    "n_scored": 222684,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "presence": 0.595,
+      "count": 0.3282,
+      "area": 0.0395,
+      "comp": 0.4954
+    },
+    "images": "2226 images",
+    "benchmark": "RSVQA-HR",
+    "split": "test"
+  },
+  "rsvqa_hr_supervised": {
+    "accuracy": 0.856,
+    "n_scored": 222684,
+    "n_skipped": 0,
+    "accuracy_by_type": {
+      "presence": 0.9038,
+      "count": 0.8645,
+      "area": 0.8428,
+      "comp": 0.8168
+    },
+    "images": "2226 images",
+    "benchmark": "RSVQA-HR",
+    "split": "test",
+    "train_examples_used": 40000
+  }
+}

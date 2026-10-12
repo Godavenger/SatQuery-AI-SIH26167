@@ -1,0 +1,105 @@
+{
+  "_meta": {
+    "benchmark": "VRSBench (val)",
+    "seed": 26167,
+    "caption_sample": "full",
+    "note": "system heads run faithfully via satquery.stage0.ingest (benchmark PNG path) + the deployed CaptionHead; metrics are pure-Python (scripts/vlm_metrics.py), no external libraries."
+  },
+  "caption": {
+    "n_scored": 9350,
+    "system_caption_words_mean": 27.1,
+    "reference_caption_words_mean": 49.7,
+    "metrics": {
+      "bleu_1": 0.0435,
+      "bleu_2": 0.0036,
+      "bleu_3": 0.0,
+      "bleu_4": 0.0,
+      "rouge_l": 0.0586,
+      "cider_d": 0.0021,
+      "cider_d_1": 0.0081,
+      "cider_d_2": 0.0003,
+      "cider_d_3": 0.0,
+      "cider_d_4": 0.0
+    },
+    "examples": [
+      {
+        "image": "05863_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as inland waters (p=0.38).",
+        "reference": "The image provided originates from GoogleEarth and features arid terrain with visible landforms and erosion patterns. A single windmill is present in the image, located towards the right side of the frame surrounded by the textured landscape."
+      },
+      {
+        "image": "05864_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as marine waters (p=0.96).",
+        "reference": "The image, sourced from GoogleEarth, features two parallel bridges over a body of water. The bridges are sizable structures that connect two landmasses, permitting the traversal of vehicles over the water."
+      },
+      {
+        "image": "05865_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as marine waters (p=0.89). Measured cover: snow ice (2.3%).",
+        "reference": "The image, sourced from GoogleEarth, captures a pair of outdoor basketball courts adjacent to each other with a red vehicle located in the upper left area. While the basketball courts are empty, detailed markings for the games are visible. One court is positioned towards the right with slightly larger dimensions, while the other is towards the left. Trees and a pathway near the vehicle add context to the surrounding area."
+      },
+      {
+        "image": "05866_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as inland waters (p=0.80), inland wetlands (p=0.71), transitional woodland, shrub (p=0.55). Measured cover: snow ice (0.5%).",
+        "reference": "The satellite image sourced from GoogleEarth depicts a section of land bisected by a highway. The highlight of the scene is an overpass located towards the bottom of the image crossing over the highway. The surrounding area is a mixture of greenery with some trees and grass."
+      },
+      {
+        "image": "05867_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as inland waters (p=0.91). Measured cover: snow ice (0.3%).",
+        "reference": "An overhead image from GoogleEarth captures a view of an overpass with visible lanes. The overpass is positioned toward the bottom of the image."
+      },
+      {
+        "image": "05868_0000.png",
+        "system": "This generic rgb scene at 0.5 m GSD is read by the learned land-cover classifier as marine waters (p=0.71). Measured cover: snow ice (0.2%).",
+        "reference": "The satellite image provided by GoogleEarth features a windmill situated in an open landscape. The windmill is a small, distinguishing structure amidst the land with no other discernible buildings or features in close proximity."
+      }
+    ]
+  },
+  "grounding": {
+    "task": "referring-object grounding (VRSBench)",
+    "n_objects": 16159,
+    "n_object_classes": 26,
+    "object_classes": {
+      "vehicle": 4545,
+      "ship": 1687,
+      "airplane": 1461,
+      "tennis-court": 1132,
+      "harbor": 1090,
+      "bridge": 846,
+      "storage-tank": 766,
+      "baseball-diamond": 712,
+      "windmill": 529,
+      "ground-track-field": 446,
+      "overpass": 419,
+      "basketball-court": 345,
+      "swimming-pool": 269,
+      "stadium": 248,
+      "expressway-service-area": 234,
+      "trainstation": 216,
+      "airport": 195,
+      "roundabout": 195,
+      "expressway-toll-station": 170,
+      "chimney": 170,
+      "soccer-ball-field": 148,
+      "dam": 146,
+      "golffield": 121,
+      "helicopter": 56,
+      "container-crane": 12,
+      "helipad": 1
+    },
+    "system_grounding_vocabulary": [
+      "bare_soil",
+      "built_up",
+      "burn_scar",
+      "cropland",
+      "snow_ice",
+      "vegetation",
+      "water"
+    ],
+    "groundable_objects": 0,
+    "groundable_class_overlap": [],
+    "mean_iou": null,
+    "acc@0.5": null,
+    "iou_metric_selfcheck_[0,0,2,2]x[1,1,3,3]": 0.1429,
+    "conclusion": "VRSBench grounds 26 discrete man-made object classes (vehicle, ship, airplane, tennis-court, ...); the system grounds areal spectral land-cover classes (water, vegetation, built_up, ...). Vocabulary overlap is 0, so referring-object IoU is N/A by construction -- the system performs a different grounding task. The IoU implementation is validated (self-check = 1/7 = 0.1429) and is exercised on real masks by the fusion/change ablations."
+  }
+}
