@@ -1,0 +1,19 @@
+# Python 3.12: API, spectral analysis, image ingest and PDF reports.
+# No torch, trained models or GPU required for this installation.
+numpy==2.2.6
+scipy==1.18.0
+Pillow==12.2.0
+scikit-image==0.26.0
+scikit-learn==1.9.0
+matplotlib==3.10.9
+rasterio==1.5.1
+pyproj==3.8.0
+fastapi==0.141.1
+uvicorn==0.52.4
+pydantic==2.13.4
+python-multipart==0.0.32
+reportlab==5.0.0
+# Needed only when fetching uncached mission or pinned-location imagery.
+requests==2.34.2
+planetary-computer==1.0.0
+pystac-client==0.9.0

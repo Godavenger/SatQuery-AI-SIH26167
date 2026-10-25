@@ -4,6 +4,12 @@ __pycache__/
 *.egg-info/
 .venv/
 venv/
+.venv-*/
+.pytest_cache/
+.coverage
+htmlcov/
+.verification/
+dist/
 
 # Large binary data (fetched via scripts/fetch_*.py — not committed)
 data/tile_cache/
@@ -14,6 +20,7 @@ data/ben_parts/
 data/raw/
 data/runs/
 data/rehearsal/
+data/uploads/
 # keep the small machine-readable metrics JSONs — they feed the report PDFs:
 !data/*.json
 # but not large derived stats artifacts:
@@ -24,6 +31,7 @@ models/*.pth
 models/joint_ckpt/
 models/onnx/*.onnx
 models/*.pkl
+models/minilm/
 
 # Logs & scratch
 *.log
@@ -36,4 +44,7 @@ data/_*.xml
 # Editor / OS
 .DS_Store
 Thumbs.db
-.claude/settings.local.json
+**/.claude/settings.local.json
+.env
+.env.*
+!.env.example
