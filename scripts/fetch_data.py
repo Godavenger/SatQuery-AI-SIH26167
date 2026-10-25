@@ -223,7 +223,7 @@ def fetch_s2(site: str, lat: float, lon: float, window: tuple[str, str],
         "cloud_cover_pct": round(float(cc), 2),
     }
 
-    return {"path": str(out.relative_to(ROOT)), "scl": str(scl_path.relative_to(ROOT)),
+    return {"path": out.relative_to(ROOT).as_posix(), "scl": scl_path.relative_to(ROOT).as_posix(),
             "date": date, "cloud_cover": round(float(cc), 2), "stac_id": item.id,
             "profile": "s2_msi", "gsd": 10.0, "bbox": bbox, "tag": tag,
             "verification": verification}
@@ -275,7 +275,7 @@ def fetch_s1(site: str, lat: float, lon: float, window: tuple[str, str],
             "STAC_ID": item.id, "GSD": "10",
             "SOURCE": f"Sentinel-1 via Planetary Computer ({coll})",
         })
-        return {"path": str(out.relative_to(ROOT)), "date": date,
+        return {"path": out.relative_to(ROOT).as_posix(), "date": date,
                 "pols": pols, "stac_id": item.id, "collection": coll,
                 "profile": "s1_grd", "gsd": 10.0, "bbox": bbox, "tag": tag}
 

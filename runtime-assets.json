@@ -1,0 +1,310 @@
+{
+  "schema_version": 1,
+  "version": "v1.1.0",
+  "archive": "satquery-runtime-v1.1.0.zip",
+  "url": "https://github.com/Godavenger/SatQuery-AI-SIH26167/releases/download/v1.1.0/satquery-runtime-v1.1.0.zip",
+  "size": 415021052,
+  "sha256": "1fde77aab815c16c6c5311f2615d8c20fa4bc00a45690e0d1705e2733951309e",
+  "files": [
+    {
+      "path": "data/raw/assam/s1_t1_2024-04-08.tif",
+      "size": 1862397,
+      "sha256": "fc90050cbfa748e5e285e7f971d1b1c87dce5696fdc3e1fc5b2d3925ee6459ed"
+    },
+    {
+      "path": "data/raw/assam/s2_t1_2024-02-10.tif",
+      "size": 4395057,
+      "sha256": "5fdd9208675acce50214ea7e1d7f489fb3394784df735fc7b83fd832bb56de17"
+    },
+    {
+      "path": "data/raw/assam/s2_t2_2024-11-21.tif",
+      "size": 3637177,
+      "sha256": "b91cdba73164c4966e101b153c2256d5fa2a467deaab37215c3912dde5274456"
+    },
+    {
+      "path": "data/raw/assam/scl_t1_2024-02-10.tif",
+      "size": 16336,
+      "sha256": "744f965e1b334481cb244e5642b326f5b41f8fcdf0f5073dbc63942dedda9249"
+    },
+    {
+      "path": "data/raw/assam/scl_t2_2024-11-21.tif",
+      "size": 17240,
+      "sha256": "ad661bce5513ecaacaffa50042396c8a528447188b0bc83e8d5cc8a658c4a4e4"
+    },
+    {
+      "path": "data/raw/creekfire/s2_t1_2020-07-05.tif",
+      "size": 4409723,
+      "sha256": "a8d76e0e925e6b11d43a3423801e39fd02e20e4899df583dee51ca04157ace25"
+    },
+    {
+      "path": "data/raw/creekfire/s2_t2_2020-11-27.tif",
+      "size": 2451125,
+      "sha256": "ab2fe4ad0da43e8236d862b93cdc51a8ba1754db2d16e68a6779b231215b9f54"
+    },
+    {
+      "path": "data/raw/creekfire/scl_t1_2020-07-05.tif",
+      "size": 7540,
+      "sha256": "ebf116e156547c818f3a6185d580a3641d06ab921877b992890e80f3f2408fdf"
+    },
+    {
+      "path": "data/raw/creekfire/scl_t2_2020-11-27.tif",
+      "size": 6870,
+      "sha256": "e8bf2bd3049e3f8bc3c0f20e6d7c6c3338f5e4e9315bb3d7946685dda11a6fa8"
+    },
+    {
+      "path": "data/raw/delhi/s1_t1_2024-01-24.tif",
+      "size": 1861363,
+      "sha256": "aecf6e4412d7de6eb189102cbe0d4291229511a0f84287204ac61be3fe067dc6"
+    },
+    {
+      "path": "data/raw/delhi/s2_t1_2023-12-05.tif",
+      "size": 4417195,
+      "sha256": "881c0a3cdd050a3e3f1ec9a5074e253e3c624695efa8811092c8a50856e4e21e"
+    },
+    {
+      "path": "data/raw/delhi/s2_t2_2024-11-29.tif",
+      "size": 4312459,
+      "sha256": "0bc80936c6a3076420b107fe3c1c115dc1ae073d03a1a67d36b12cd925aa57f1"
+    },
+    {
+      "path": "data/raw/delhi/scl_t1_2023-12-05.tif",
+      "size": 16806,
+      "sha256": "9b514ab74911e66216195814b69d0c2465388a63a7edc36b41c3d81b0b278cc1"
+    },
+    {
+      "path": "data/raw/delhi/scl_t2_2024-11-29.tif",
+      "size": 5830,
+      "sha256": "878cc5608dd9419c95af13c89afc3b248f4cc709824190badc2cc897a89bccdc"
+    },
+    {
+      "path": "data/raw/dubai/s1_t1_2024-03-22.tif",
+      "size": 1866911,
+      "sha256": "49e2e21501480a3014225249165485341072826ca5deebc94801c6686fbf46f5"
+    },
+    {
+      "path": "data/raw/dubai/s2_t1_2024-03-18.tif",
+      "size": 4660499,
+      "sha256": "a3fbd2f5f9d013c0aa1dd2b1b89072c3696b9b2f04799989346b2d2045ea3ffd"
+    },
+    {
+      "path": "data/raw/dubai/scl_t1_2024-03-18.tif",
+      "size": 4942,
+      "sha256": "4596081ff98c758f4b995ff50f921b355768bfc3ee791adeb669cb414c1c8c8b"
+    },
+    {
+      "path": "data/raw/gangotri/s2_t1_2023-11-12.tif",
+      "size": 4634663,
+      "sha256": "c64db779a4d8ebf10d7a66d2e5892648dd2f73ddf3109f04350f1b950485f2c6"
+    },
+    {
+      "path": "data/raw/gangotri/s2_t2_2024-11-01.tif",
+      "size": 4558287,
+      "sha256": "7d1ccbdb3edca7dcf77bc0e53e2f8ddab40c91be796e0c892d8bcfd4783137bf"
+    },
+    {
+      "path": "data/raw/gangotri/scl_t1_2023-11-12.tif",
+      "size": 13732,
+      "sha256": "2af49a2c717de36574658f0b80c99cc0e3fe29cd33935780a37a23b08cbd186c"
+    },
+    {
+      "path": "data/raw/gangotri/scl_t2_2024-11-01.tif",
+      "size": 7464,
+      "sha256": "a66159ebb4479df67887399a858ae047e781a13ba83f3e12b96101a7be38bb31"
+    },
+    {
+      "path": "data/raw/kaziranga/s1_t1_2024-04-13.tif",
+      "size": 1852793,
+      "sha256": "c40ea52de69bd9b0acab2f2ff3be1e180392e9e7dcb0a1e8d3b19908ba031f14"
+    },
+    {
+      "path": "data/raw/kaziranga/s2_t1_2024-02-12.tif",
+      "size": 4303087,
+      "sha256": "15e1793df774ce13f4a18e3fbe6b931012183d014852a4b06bc4b2eaf5a26917"
+    },
+    {
+      "path": "data/raw/kaziranga/s2_t2_2024-11-18.tif",
+      "size": 4370937,
+      "sha256": "f1cbc9089a7ada257e6029d346c86af59315f33a7085850e425deaa46517e114"
+    },
+    {
+      "path": "data/raw/kaziranga/scl_t1_2024-02-12.tif",
+      "size": 17898,
+      "sha256": "00d316a03d4b41532106547f27ababf7191f21b269bd93ddb5ad030a9e32a318"
+    },
+    {
+      "path": "data/raw/kaziranga/scl_t2_2024-11-18.tif",
+      "size": 10896,
+      "sha256": "c637f79f1a9c98cd0a7a42e23d2dc6b3a332000d2f75d262be2e5e32e9731490"
+    },
+    {
+      "path": "data/raw/nile/s2_t1_2024-01-16.tif",
+      "size": 4454677,
+      "sha256": "6f07395c4fcc4f7ca6ea0113b90053754e55d0a9908ae8fb2e2262fc3e8154a2"
+    },
+    {
+      "path": "data/raw/nile/s2_t2_2024-12-21.tif",
+      "size": 4477265,
+      "sha256": "a35616ec03941b8e5802ded2062debafbb2b05fc75b5286bb31cf5f4438cd5d6"
+    },
+    {
+      "path": "data/raw/nile/scl_t1_2024-01-16.tif",
+      "size": 10992,
+      "sha256": "878dfd6c7e3492536f81c60bbc504ffbb68c3249d2f612f8214a6eff63a93152"
+    },
+    {
+      "path": "data/raw/nile/scl_t2_2024-12-21.tif",
+      "size": 13886,
+      "sha256": "8462d27de2e0098326899878488efcffe4ec6c8361e379fbbb4583b981e88423"
+    },
+    {
+      "path": "data/raw/punjab/s1_t1_2024-05-12.tif",
+      "size": 1853241,
+      "sha256": "9c0fed1a7c055e92f7eb9e228b2a943734e13fb438145d9850a8dcf02fa3f631"
+    },
+    {
+      "path": "data/raw/punjab/s2_t1_2024-04-06.tif",
+      "size": 4472143,
+      "sha256": "a187e20b7c6fc861428c048b5fd5e49aec3078519041ec2311937d18803b0619"
+    },
+    {
+      "path": "data/raw/punjab/scl_t1_2024-04-06.tif",
+      "size": 21448,
+      "sha256": "85dd46b35358cb801f1e17bf3cb50f49e097a164605640484ac3003b1c845beb"
+    },
+    {
+      "path": "data/raw/rondonia/s2_t1_2023-07-04.tif",
+      "size": 4253923,
+      "sha256": "8773fd1253a80a9a8232ddc159ff5362262d8f7b6768585d3bc149dba030c2d4"
+    },
+    {
+      "path": "data/raw/rondonia/s2_t2_2024-07-18.tif",
+      "size": 4291377,
+      "sha256": "4da8ea6793244ea3ea5fcd1eb4603f1e8d31b709b9a5b1b76ce9bba8c39bfe94"
+    },
+    {
+      "path": "data/raw/rondonia/scl_t1_2023-07-04.tif",
+      "size": 4800,
+      "sha256": "4680641d235493f053153cbe8efbc0682872a6944d848cc98ba66f9ddb91437e"
+    },
+    {
+      "path": "data/raw/rondonia/scl_t2_2024-07-18.tif",
+      "size": 20072,
+      "sha256": "15bfde3cda002c1e7d19eb24cb8eb69d22c480fa80296022b59c2401e040ac55"
+    },
+    {
+      "path": "data/raw/sundarbans/s1_t1_2024-03-23.tif",
+      "size": 1850707,
+      "sha256": "912d12f80211bc09bda80ff9920ce38e9db7ea409ae0320bcd6b6fb28fcdacb5"
+    },
+    {
+      "path": "data/raw/sundarbans/s2_t1_2024-01-01.tif",
+      "size": 2380783,
+      "sha256": "ec97824c122d6e11dc109c1497f43423fad883a906956f6e57ded83f782ce584"
+    },
+    {
+      "path": "data/raw/sundarbans/scl_t1_2024-01-01.tif",
+      "size": 6544,
+      "sha256": "06192046e57a46ef48109ea44a822ba4359d20006f2804c8e4268a6282427eb0"
+    },
+    {
+      "path": "models/backbone_ft.pth",
+      "size": 202194532,
+      "sha256": "6e2e13e74e9d758898ae433adc85285b976390d6755262df236e01798faa45a3"
+    },
+    {
+      "path": "models/ben_txt_heads.pth",
+      "size": 20683254,
+      "sha256": "34138bbcb9f1cefed8b86bb06fb7c8823b19d31c89cb464b4ebcf00ccb9f5e30"
+    },
+    {
+      "path": "models/minilm/1_Pooling/config.json",
+      "size": 190,
+      "sha256": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23"
+    },
+    {
+      "path": "models/minilm/LICENSE",
+      "size": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "models/minilm/README.md",
+      "size": 10502,
+      "sha256": "dcd602d2fd35c203a247304a06fec6654a12f7941b739f9221a064fe8dc3b7f0"
+    },
+    {
+      "path": "models/minilm/config.json",
+      "size": 612,
+      "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41"
+    },
+    {
+      "path": "models/minilm/config_sentence_transformers.json",
+      "size": 116,
+      "sha256": "061ca9d39661d6c6d6de5ba27f79a1cd5770ea247f8d46412a68a498dc5ac9f3"
+    },
+    {
+      "path": "models/minilm/model.safetensors",
+      "size": 90868376,
+      "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"
+    },
+    {
+      "path": "models/minilm/modules.json",
+      "size": 349,
+      "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+    },
+    {
+      "path": "models/minilm/sentence_bert_config.json",
+      "size": 53,
+      "sha256": "fc1993fde0a95c24ec6c022539d41cf6e2f7c9721e5415d6fb6897472a9cd4b7"
+    },
+    {
+      "path": "models/minilm/special_tokens_map.json",
+      "size": 112,
+      "sha256": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3"
+    },
+    {
+      "path": "models/minilm/tokenizer.json",
+      "size": 466247,
+      "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+    },
+    {
+      "path": "models/minilm/tokenizer_config.json",
+      "size": 350,
+      "sha256": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b"
+    },
+    {
+      "path": "models/minilm/vocab.txt",
+      "size": 231508,
+      "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    },
+    {
+      "path": "models/onnx/caption_head.int8.onnx",
+      "size": 1063305,
+      "sha256": "e809911d2010ef0cc8ddf4cbf9680f2d425bdc892a3a3f76d48da6937bbdfa81"
+    },
+    {
+      "path": "models/onnx/opt_feat.int8.onnx",
+      "size": 24125140,
+      "sha256": "74d722e450de04ea1db43204e1b61d30978c649c50cdce36987f1a71de33d471"
+    },
+    {
+      "path": "models/onnx/s1_head.int8.onnx",
+      "size": 39921,
+      "sha256": "7877b7a86c4d96e1d20e563ad36a3373afbc98b996ac907a0b7f9a7b92488b14"
+    },
+    {
+      "path": "models/onnx/sar_feat.int8.onnx",
+      "size": 24044940,
+      "sha256": "83684e2e3b12cb28a3b9c770d5f581ce2b0f0ead11e0a7b1af23b44ecf70f69d"
+    },
+    {
+      "path": "models/router_v2.pkl",
+      "size": 234866,
+      "sha256": "b70fb9b8384e142e7b339aad06888d3df4803c2a4b4772fa415e8b9c9e721344"
+    },
+    {
+      "path": "data/raw/manifest.json",
+      "size": 13268,
+      "sha256": "f1cacb17398507bc5f07b7d6aa1d0d6759e8bd599bdb38da3de7f8329155935d"
+    }
+  ]
+}
