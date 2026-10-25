@@ -238,6 +238,8 @@ class NeuralStack:
             return self
         self._loaded = True
         try:
+            if not (MODELS / "backbone_ft.pth").is_file():
+                raise FileNotFoundError("the trained backbone checkpoint is unavailable")
             blob = self._load_blob()
             if blob is None:
                 raise FileNotFoundError(f"{HEADS_PATH} not found")
@@ -324,11 +326,13 @@ class NeuralStack:
         if self._st is not None:
             return self._st
         from sentence_transformers import SentenceTransformer
-        name = "sentence-transformers/all-MiniLM-L6-v2"
+        local_model = MODELS / "minilm"
+        name = str(local_model) if local_model.is_dir() else "sentence-transformers/all-MiniLM-L6-v2"
+        options = {"local_files_only": True} if local_model.is_dir() else {}
         try:
-            self._st = SentenceTransformer(name, device=str(self.device))
+            self._st = SentenceTransformer(name, device=str(self.device), **options)
         except Exception:                                       # noqa: BLE001
-            self._st = SentenceTransformer(name, device="cpu")
+            self._st = SentenceTransformer(name, device="cpu", **options)
         return self._st
 
     def text_coverage(self, text: str) -> int:
@@ -628,6 +632,8 @@ class NeuralStack:
         if self.load_error:
             out["load_error"] = self.load_error
         try:
+            if not (MODELS / "backbone_ft.pth").is_file():
+                raise FileNotFoundError("the trained backbone checkpoint is unavailable")
             bb = get_backbone()
             out["backbone"] = {
                 "artifact": getattr(bb, "checkpoint_path", None),

@@ -82,7 +82,11 @@ def calibrate(raw_conf: float, task: str,
     The effect is that a model that always says 0.95 gets dragged toward 0.80,
     while a model that under-reports confidence gets lifted.
     """
-    T = (temperatures or DEFAULT_TEMPERATURES).get(task, 1.0)
+    T = (temperatures if temperatures is not None else DEFAULT_TEMPERATURES).get(task, 1.0)
+    if not np.isfinite(T) or T <= 0:
+        raise ValueError("calibration temperature must be finite and positive")
+    if not np.isfinite(raw_conf):
+        return 0.0
     p = float(np.clip(raw_conf, 1e-6, 1.0 - 1e-6))
     logit = np.log(p / (1.0 - p))
     cal = float(1.0 / (1.0 + np.exp(-logit / T)))
@@ -189,7 +193,7 @@ def merge(
             cal = round(max(0.1, cal - penalty), 4)
 
     thresh = (abstain_thresholds or DEFAULT_ABSTAIN_THRESH).get(intent, 0.30)
-    abstained = cal < thresh
+    abstained = task_result.abstained or cal < thresh
 
     cal_info = {
         "raw_confidence": round(float(task_result.confidence), 4),
@@ -200,12 +204,14 @@ def merge(
         "conflict_penalty": round(sum(c.penalty for c in conflicts), 4),
         "abstain_threshold": thresh,
         "abstained": abstained,
+        "specialist_abstained": task_result.abstained,
         "task": intent,
     }
 
     if abstained:
         ans = Answer(
-            text=("Confidence after calibration is "
+            text=(task_result.text if task_result.abstained else
+                  "Confidence after calibration is "
                   f"{cal:.0%}, below the {thresh:.0%} threshold for {intent}. "
                   "The supporting evidence is recorded in this trace but no "
                   "answer is emitted. A reasoned abstention is preferable to a "
@@ -215,7 +221,8 @@ def merge(
             intent=intent,
             output_kind=task_result.output_kind,
             abstained=True,
-            abstain_reason=(f"calibrated confidence {cal:.0%} < threshold "
+            abstain_reason=(task_result.text if task_result.abstained else
+                            f"calibrated confidence {cal:.0%} < threshold "
                             f"{thresh:.0%}"),
             visual=task_result.visual,
             raw=task_result.raw,

@@ -11,6 +11,7 @@ from __future__ import annotations
 import io
 import json
 import time
+from html import escape
 from pathlib import Path
 from typing import Any, Optional
 
@@ -126,20 +127,24 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
         elements.append(Paragraph(str(text), style))
 
     def mono(text):
-        elements.append(Paragraph(str(text)[:800], MONO))
+        elements.append(Paragraph(escape(str(text)[:800]), MONO))
+
+    def cells(rows):
+        return [[Paragraph(escape(str(value)), SMALL) for value in row]
+                for row in rows]
 
     # ---- cover ----
     elements.append(Spacer(1, 6 * mm))
     p("<b>SatQuery AI &mdash; Execution Report</b>", H1)
     p("SIH26167 &nbsp;|&nbsp; ISRO / Space Technology", SMALL)
-    p(f"Problem Statement ID: SIH26167 &nbsp;|&nbsp; Run: {trace.run_id}", SMALL)
+    p(f"Problem Statement ID: SIH26167 &nbsp;|&nbsp; Run: {escape(trace.run_id)}", SMALL)
     started = time.strftime("%Y-%m-%d %H:%M:%S UTC", time.gmtime(trace.started_at))
     p(f"Generated: {started} &nbsp;|&nbsp; Latency: {trace.total_latency_ms:.0f} ms", SMALL)
     hr()
 
     # ---- query ----
     p("<b>Query</b>", H2)
-    p(trace.query or "(no query text)")
+    p(escape(trace.query or "(no query text)"))
     elements.append(Spacer(1, 2 * mm))
 
     # ---- tiles ----
@@ -155,7 +160,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
                 str(t.get("ts", "")),
                 f"{100 * t.get('clear_fraction', 0):.1f}%",
             ])
-        tbl = Table(rows, colWidths=[45*mm, 28*mm, 16*mm, 42*mm, 26*mm, 16*mm])
+        tbl = Table(cells(rows), colWidths=[39*mm, 28*mm, 16*mm, 42*mm, 26*mm, 16*mm], repeatRows=1)
         tbl.setStyle(TBL)
         elements.append(tbl)
         elements.append(Spacer(1, 3 * mm))
@@ -177,7 +182,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
             f"{s.confidence:.2f}" if s.confidence is not None else "--",
             (s.output_summary or "")[:90],
         ])
-    tbl = Table(rows, colWidths=[8*mm, 12*mm, 30*mm, 38*mm, 16*mm, 63*mm])
+    tbl = Table(cells(rows), colWidths=[8*mm, 12*mm, 30*mm, 38*mm, 16*mm, 63*mm], repeatRows=1)
     tbl.setStyle(TBL)
     elements.append(tbl)
     hr()
@@ -199,7 +204,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
                     "PASS" if f.get("passed") else "FAIL",
                     (f.get("detail", ""))[:120],
                 ])
-            tbl = Table(rows, colWidths=[30*mm, 16*mm, 121*mm])
+            tbl = Table(cells(rows), colWidths=[30*mm, 16*mm, 121*mm], repeatRows=1)
             tbl.setStyle(TableStyle([
                 ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#e2e8f0")),
                 ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
@@ -222,7 +227,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
             action = gv.get("action", "")
             reason = gv.get("reason", "")
             if reason:
-                p(f"Action: <b>{action}</b> &mdash; {reason}", SMALL)
+                p(f"Action: <b>{escape(action)}</b> &mdash; {escape(reason)}", SMALL)
             elements.append(Spacer(1, 2 * mm))
 
     # ---- answer ----
@@ -233,18 +238,18 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
         style = ABSTAIN if ans.abstained else ANSWER
         p(f"<b>{'[ABSTAINED]' if ans.abstained else '[ANSWER]'}</b> "
           f"Confidence: {ans.confidence:.0%} &nbsp;|&nbsp; "
-          f"Intent: {ans.intent} &nbsp;|&nbsp; "
-          f"Output kind: {ans.output_kind}", SMALL)
+          f"Intent: {escape(ans.intent)} &nbsp;|&nbsp; "
+          f"Output kind: {escape(ans.output_kind)}", SMALL)
         elements.append(Spacer(1, 1 * mm))
-        p(ans.text, style)
+        p(escape(ans.text), style)
 
         if ans.conflicts:
             elements.append(Spacer(1, 2 * mm))
             p("<b>Cross-model conflicts detected</b>", SMALL)
             for c in ans.conflicts:
-                p(f"  {' vs '.join(c.between if hasattr(c,'between') else c.get('between',[]))}: "
+                p(escape(f"  {' vs '.join(c.between if hasattr(c,'between') else c.get('between',[]))}: "
                   f"{c.detail if hasattr(c,'detail') else c.get('detail','')} "
-                  f"(penalty {c.penalty if hasattr(c,'penalty') else c.get('penalty',0):.2f})",
+                  f"(penalty {c.penalty if hasattr(c,'penalty') else c.get('penalty',0):.2f})"),
                   SMALL)
 
         cal = ans.calibration
@@ -252,7 +257,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
             elements.append(Spacer(1, 2 * mm))
             p("<b>Calibration</b>", SMALL)
             cal_rows = [[k, str(v)] for k, v in cal.items()]
-            tbl = Table(cal_rows, colWidths=[55*mm, 100*mm])
+            tbl = Table(cells(cal_rows), colWidths=[55*mm, 100*mm])
             tbl.setStyle(TableStyle([
                 ("FONTSIZE", (0, 0), (-1, -1), 7.5),
                 ("ROWBACKGROUNDS", (0, 0), (-1, -1),
@@ -279,7 +284,7 @@ def build_pdf(trace: TraceRecord, output_path: Optional[str | Path] = None) -> b
                 s.weights_hash or "--",
             ])
     if len(repro_rows) > 1:
-        tbl = Table(repro_rows, colWidths=[35*mm, 65*mm, 65*mm])
+        tbl = Table(cells(repro_rows), colWidths=[35*mm, 65*mm, 65*mm], repeatRows=1)
         tbl.setStyle(TBL)
         elements.append(tbl)
     else:

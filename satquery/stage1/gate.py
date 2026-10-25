@@ -82,6 +82,14 @@ def run_gate(intent: str, tiles: list[Tile], query: str = "",
             v.reason = (f"both inputs are {mods[0]}; degrading to "
                         "single-modality analysis with the loss of complementarity "
                         "flagged and confidence reduced")
+    elif intent in BITEMPORAL_INTENTS:
+        ok = len(set(mods)) == 1
+        v.add("modality", ok, f"change comparison requires matching modalities; got {mods}",
+              {"modalities": mods})
+        if not ok:
+            v.action, v.reason = "abstain", v.fields[-1].detail
+            _fill_unrun(v, {"number", "modality"})
+            return v, pair_check
     else:
         v.add("modality", True,
               f"modalities {mods} accepted for {intent}",
@@ -108,6 +116,15 @@ def run_gate(intent: str, tiles: list[Tile], query: str = "",
     ts = [t.ts for t in tiles]
     meta_notes = [f"GSD {gsds} m", f"timestamps {ts}"]
     meta_ok = True
+
+    usable = [t.clear_fraction > 0 for t in tiles]
+    has_evidence = any(usable) if intent == "fuse" else all(usable)
+    if not has_evidence:
+        v.add("metadata", False, "no usable pixels remain after cloud/nodata masking",
+              {"clear_fractions": [t.clear_fraction for t in tiles]})
+        v.action, v.reason = "abstain", v.fields[-1].detail
+        _fill_unrun(v, {"number", "modality", "format", "metadata"})
+        return v, pair_check
 
     if intent in BITEMPORAL_INTENTS:
         distinct = bool(ts[0] and ts[1] and ts[0] != ts[1])
@@ -172,7 +189,7 @@ def run_gate(intent: str, tiles: list[Tile], query: str = "",
             v.reason = pc.detail
         return v, pc
 
-    if intent == "ground":
+    if intent in ("ground", "vqa"):
         supported, requested, nearest = class_supported(query)
         v.add("compatibility", supported,
               (f"target class '{requested}' is within the supported grounding "

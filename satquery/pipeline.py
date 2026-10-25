@@ -46,6 +46,7 @@ def run_query(
     profile_ids: Optional[list[Optional[str]]] = None,
     timestamps: Optional[list[Optional[str]]] = None,
     tile_size: int = 512,
+    benchmark_path: bool = False,
     requested_params: Optional[dict[str, Any]] = None,
     use_cache: bool = True,
     run_id: Optional[str] = None,
@@ -54,6 +55,15 @@ def run_query(
 
     Returns a TraceRecord with every step populated and `answer` set.
     """
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError("query must contain a question")
+    if not 1 <= len(tile_paths) <= 2:
+        raise ValueError("provide one or two tile paths")
+    if not isinstance(tile_size, int) or isinstance(tile_size, bool) or tile_size <= 0:
+        raise ValueError("tile_size must be a positive integer")
+    for name, values in (("profile_ids", profile_ids), ("timestamps", timestamps)):
+        if values is not None and len(values) != len(tile_paths):
+            raise ValueError(f"{name} must have one entry per tile path")
     trace = TraceRecord(
         run_id=run_id or new_run_id(),
         query=query,
@@ -72,10 +82,12 @@ def run_query(
             warnings.simplefilter("ignore")
             if use_cache:
                 res = _get_cache().ingest_cached(
-                    str(path), profile_id=prof, ts=ts, tile_size=tile_size)
+                    str(path), profile_id=prof, ts=ts, tile_size=tile_size,
+                    overlap=min(32, tile_size - 1), benchmark_path=benchmark_path)
             else:
                 res = ingest(str(path), profile_id=prof, ts=ts,
-                             tile_size=tile_size)
+                             tile_size=tile_size, overlap=min(32, tile_size - 1),
+                             benchmark_path=benchmark_path)
         tile = res.tiles[0]
         tiles.append(tile)
         trace.tiles.append(tile.describe())
@@ -102,11 +114,19 @@ def run_query(
         # degrades a valid fuse query to describe.
         cross_modal = (any("optical" in t.modality for t in tiles)
                        and any("sar" in t.modality for t in tiles))
-        bi = (not cross_modal) and tiles[0].ts != tiles[1].ts
+        bi = not cross_modal
         pair_check = check_pair(
             tiles[0], tiles[1],
             kind="bi_temporal" if bi else "cross_modal")
-        if pair_check.aligned is False and pair_check.residual_magnitude_px > 0.5:
+        # Reprojection uses the actual CRS/affine grid, including when array
+        # dimensions happen to agree. Preserve a failing footprint check.
+        if pair_check.footprint_iou >= 0.9:
+            tiles[1] = resample_to(tiles[1], tiles[0])
+            pair_check = check_pair(tiles[0], tiles[1],
+                                    kind="bi_temporal" if bi else "cross_modal")
+        if (bi and pair_check.footprint_iou >= 0.9
+                and pair_check.aligned is False
+                and pair_check.residual_magnitude_px > 0.5):
             tr0 = time.perf_counter()
             shift_before = pair_check.residual_shift_px
             tiles[1] = align_pair(tiles[0], tiles[1], shift_before)
@@ -128,8 +148,7 @@ def run_query(
                                          for v in pair_check.residual_shift_px],
                         "residual_after_px": pair_check.residual_magnitude_px},
             ))
-        if tiles[0].shape != tiles[1].shape:
-            tiles[1] = resample_to(tiles[1], tiles[0])
+        trace.tiles = [t.describe() for t in tiles]
 
     plan = controller.plan(query, tiles, trace,
                            requested_params=requested_params,
@@ -195,14 +214,14 @@ def run_query(
 
 
 def _software_versions() -> dict[str, Any]:
-    vers: dict[str, Any] = {"satquery": "0.1.0"}
+    from importlib.metadata import PackageNotFoundError, version
+    from . import __version__
+    vers: dict[str, Any] = {"satquery": __version__}
     for mod, key in (("torch", "torch"), ("rasterio", "rasterio"),
                      ("numpy", "numpy"), ("torchgeo", "torchgeo"),
                      ("scipy", "scipy")):
         try:
-            import importlib
-            m = importlib.import_module(mod)
-            vers[key] = getattr(m, "__version__", "?")
-        except ImportError:
+            vers[key] = version(mod)
+        except PackageNotFoundError:
             pass
     return vers

@@ -111,7 +111,7 @@ def _canonical_class(query: str) -> tuple[Optional[str], Optional[str], bool]:
 
     for surface, nearest in UNSUPPORTED_CLASSES.items():
         if re.search(rf"\b{re.escape(surface)}(?:e?s)?\b", q) \
-                and len(surface) > best[0]:
+                and (best[3] or len(surface) > best[0]):
             best = (len(surface), nearest, surface, False)
 
     return best[1], best[2], best[3]
@@ -136,7 +136,7 @@ def extract_slots(query: str, intent: str) -> Slots:
             break
 
     temporal = re.findall(
-        r"\b(19|20)\d{2}\b|\b(?:before|after|prior|earlier|later|previous|"
+        r"\b(?:19|20)\d{2}\b|\b(?:before|after|prior|earlier|later|previous|"
         r"recent|past|monsoon|pre-monsoon|post-monsoon|kharif|rabi|"
         r"jan\w*|feb\w*|mar\w*|apr\w*|may|jun\w*|jul\w*|aug\w*|sep\w*|"
         r"oct\w*|nov\w*|dec\w*)\b", q)
@@ -228,7 +228,7 @@ class RuleRouter:
             else:
                 scores["change"] += 0.70
                 scores["change-qa"] += 0.20
-        elif self._QA_CUE.search(q) and re.search(
+        elif re.search(r"\b(increas\w*|decreas\w*|unchanged|remain\w*|stable)\b", q) and re.search(
                 r"\b(built-?up|water|forest|vegetation|crop|urban|snow|ice)\b", q):
             # polarity language without an explicit change cue is still
             # change-qa when it names a land-cover class

@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import os
 import pickle
+import tempfile
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -96,8 +97,17 @@ def ingest(
 
     t0 = time.perf_counter()
 
+    if not isinstance(tile_size, int) or isinstance(tile_size, bool) or tile_size <= 0:
+        raise IngestError("tile_size must be a positive integer", "invalid_parameter")
+    if not isinstance(overlap, int) or not 0 <= overlap < tile_size:
+        raise IngestError("overlap must be between 0 and tile_size - 1", "invalid_parameter")
+    if not isinstance(max_tiles, int) or max_tiles < 1:
+        raise IngestError("max_tiles must be a positive integer", "invalid_parameter")
+    if gsd_override is not None and (not np.isfinite(gsd_override) or gsd_override <= 0):
+        raise IngestError("gsd_override must be finite and positive", "invalid_parameter")
+
     # -- 1. open and validate --------------------------------------------
-    if not path.exists():
+    if not path.is_file():
         raise IngestError(f"file not found: {path}", "not_found")
 
     size_mb = path.stat().st_size / 1e6
@@ -115,7 +125,7 @@ def ingest(
     if ext not in BENCHMARK_FORMATS and ext not in GEO_FORMATS:
         raise IngestError(f"unsupported format '{ext}'", "format_not_permitted")
 
-    arr, crs, transform, bounds, native_gsd, meta_ts = _read_raster(
+    arr, crs, transform, bounds, native_gsd, meta_ts, raster_nodata = _read_raster(
         path, limits, benchmark_path)
     step("open_validate", True,
          f"{path.name}: {arr.shape[0]} band(s) {arr.shape[1]}x{arr.shape[2]} "
@@ -153,6 +163,13 @@ def ingest(
 
     gsd = float(gsd_override or native_gsd or profile.native_gsd)
 
+    # Preserve nodata before radiometry turns zero SAR power into finite dB.
+    nodata = raster_nodata.copy()
+    nodata |= np.logical_or.reduce([~np.isfinite(x) for x in bands.values()])
+    if profile.nodata is not None:
+        mapped_nodata = profile.nodata * profile.scale + profile.offset
+        nodata |= np.logical_and.reduce([x == mapped_nodata for x in bands.values()])
+
     # -- 3/4. modality-specific radiometry --------------------------------
     if profile.radiometry == "sar_linear_to_db":
         for slot in list(bands):
@@ -174,6 +191,8 @@ def ingest(
 
     # -- 5. quality mask --------------------------------------------------
     qa, qa_detail = _quality_mask(bands, profile)
+    qa |= nodata
+    qa_detail += f"; {int(nodata.sum())} source nodata px excluded"
     step("quality_mask", True, qa_detail,
          flagged_fraction=round(float(qa.mean()), 4))
 
@@ -206,11 +225,13 @@ def _read_raster(path: Path, limits: IngestLimits, benchmark_path: bool):
     if ext in BENCHMARK_FORMATS:
         from PIL import Image
         with Image.open(path) as im:
-            im = im.convert("RGB")
-            if im.width * im.height > limits.max_pixels:
+            if (im.width * im.height * 3 > limits.max_pixels
+                    or max(im.size) > limits.max_dim):
                 raise IngestError("image exceeds pixel cap", "too_large")
+            im = im.convert("RGB")
             a = np.asarray(im)
-        return np.transpose(a, (2, 0, 1)), None, None, None, None, None
+        return (np.transpose(a, (2, 0, 1)), None, None, None, None, None,
+                np.zeros(a.shape[:2], dtype=bool))
 
     try:
         import rasterio
@@ -238,13 +259,16 @@ def _read_raster(path: Path, limits: IngestLimits, benchmark_path: bool):
                 "not_georeferenced")
 
         arr = src.read()
+        nodata = src.dataset_mask() == 0
         crs = str(src.crs) if src.crs else None
         transform = tuple(src.transform)[:6] if src.transform else None
         bounds = tuple(src.bounds) if georeferenced else None
 
         gsd = None
         if src.transform:
-            gsd = abs(float(src.transform.a))
+            gsd = float(np.hypot(src.transform.a, src.transform.d))
+            if src.crs and src.crs.is_projected:
+                gsd *= src.crs.linear_units_factor[1]
             if crs and ("4326" in crs or getattr(src.crs, "is_geographic", False)):
                 # In a geographic CRS a longitude degree shrinks with latitude,
                 # so the x pixel size is not a metre scale. The y pixel size is
@@ -258,7 +282,7 @@ def _read_raster(path: Path, limits: IngestLimits, benchmark_path: bool):
                 ts = tags[k]
                 break
 
-    return arr, crs, transform, bounds, gsd, ts
+    return arr, crs, transform, bounds, gsd, ts, nodata
 
 
 def _quality_mask(bands: dict[str, np.ndarray],
@@ -284,12 +308,16 @@ def _quality_mask(bands: dict[str, np.ndarray],
 
     if blue is None and pan is not None:
         # Panchromatic: brightness-only heuristic is all that is available.
-        bright = pan > np.percentile(pan[np.isfinite(pan)], 99.0)
+        finite = np.isfinite(pan)
+        bright = (pan > np.percentile(pan[finite], 99.0)
+                  if finite.any() else np.zeros(shape, dtype=bool))
+        bright |= ~finite
         return bright, ("panchromatic: no spectral cloud test possible, "
                         "brightness-percentile proxy only")
 
     if blue is None or red is None:
-        return np.zeros(shape, dtype=bool), "no spectral bands for a cloud test"
+        return (np.logical_or.reduce([~np.isfinite(x) for x in bands.values()]),
+                "no spectral bands for a cloud test; non-finite pixels excluded")
 
     # Spectral cloud test: clouds are bright and spectrally flat across the
     # visible, and unlike bright bare soil they stay bright in the blue.
@@ -441,12 +469,18 @@ class PairCheck:
 
 def footprint_iou(a: Tile, b: Tile) -> float:
     """Intersection-over-union of two tile footprints in geographic space."""
-    if not a.bounds or not b.bounds:
+    if not a.bounds and not b.bounds:
         # No geo-reference on either side (benchmark path): fall back to shape
         # agreement, which is the only footprint notion available.
         return 1.0 if a.shape == b.shape else 0.0
+    if not a.bounds or not b.bounds or bool(a.crs) != bool(b.crs):
+        return 0.0
     ax0, ay0, ax1, ay1 = a.bounds
-    bx0, by0, bx1, by1 = b.bounds
+    other_bounds = b.bounds
+    if a.crs and b.crs and a.crs != b.crs:
+        from rasterio.warp import transform_bounds
+        other_bounds = transform_bounds(b.crs, a.crs, *other_bounds)
+    bx0, by0, bx1, by1 = other_bounds
     ix = max(0.0, min(ax1, bx1) - max(ax0, bx0))
     iy = max(0.0, min(ay1, by1) - max(ay0, by0))
     inter = ix * iy
@@ -482,7 +516,7 @@ def check_pair(a: Tile, b: Tile, kind: str,
 
     shift = (0.0, 0.0)
     mag = 0.0
-    if a.shape == b.shape and min(a.shape) > 8:
+    if kind == "bi_temporal" and a.shape == b.shape and min(a.shape) > 8:
         try:
             from skimage.registration import phase_cross_correlation
             sh, _, _ = phase_cross_correlation(
@@ -512,7 +546,8 @@ def check_pair(a: Tile, b: Tile, kind: str,
                          detail, aligned=mag <= max_shift_px)
 
     # cross-modal
-    truly_different = ("optical" in mods and "sar" in mods)
+    truly_different = ((a.has_optical and b.has_sar)
+                        or (b.has_optical and a.has_sar))
     ok = truly_different and iou >= min_iou
     if not truly_different:
         detail = (f"both inputs are {mods[0]}; fusion requires one optical and "
@@ -521,9 +556,10 @@ def check_pair(a: Tile, b: Tile, kind: str,
         detail = f"footprint IoU {iou:.3f} below {min_iou}; tiles do not overlap"
     else:
         detail = (f"optical+SAR confirmed, footprint IoU {iou:.3f}, "
-                  f"co-registration residual {mag:.2f} px")
+                  "co-registration checked from the raster grids; "
+                  "cross-modal pixel correlation is not a valid shift estimate")
     return PairCheck("cross_modal", ok, iou, shift, mag, distinct, mods,
-                     detail, aligned=mag <= max_shift_px)
+                     detail, aligned=ok)
 
 
 def align_pair(a: Tile, b: Tile, shift: tuple[float, float]) -> Tile:
@@ -532,12 +568,10 @@ def align_pair(a: Tile, b: Tile, shift: tuple[float, float]) -> Tile:
 
     if abs(shift[0]) < 1e-3 and abs(shift[1]) < 1e-3:
         return b
-    bands = {k: ndshift(v, shift, order=1, mode="nearest")
+    bands = {k: ndshift(v, shift, order=1, mode="constant", cval=0.0)
              for k, v in b.bands.items()}
-    qa = b.qa_mask
-    if qa is not None:
-        qa = ndshift(qa.astype(np.float32), shift, order=0,
-                     mode="nearest") > 0.5
+    qa = ndshift(b.valid_mask.astype(np.uint8), shift, order=0,
+                 mode="constant", cval=0) == 0
     return Tile(id=b.id + "_aligned", sensor_id=b.sensor_id, bands=bands,
                 gsd=b.gsd, crs=b.crs, transform=b.transform, bounds=b.bounds,
                 ts=b.ts, qa_mask=qa, meta=b.meta)
@@ -545,8 +579,30 @@ def align_pair(a: Tile, b: Tile, shift: tuple[float, float]) -> Tile:
 
 def resample_to(src: Tile, ref: Tile) -> Tile:
     """Resample ``src`` onto ``ref``'s pixel grid for cross-modal fusion."""
-    if src.shape == ref.shape:
+    same_grid = (src.shape == ref.shape and src.crs == ref.crs
+                 and src.transform == ref.transform)
+    if same_grid:
         return src
+    if src.crs and ref.crs and src.transform and ref.transform:
+        from affine import Affine
+        from rasterio.warp import reproject, Resampling
+        kwargs = dict(src_transform=Affine(*src.transform), src_crs=src.crs,
+                      dst_transform=Affine(*ref.transform), dst_crs=ref.crs)
+        bands = {}
+        for name, values in src.bands.items():
+            source = np.where(src.valid_mask, values, np.nan).astype(np.float32)
+            dest = np.full(ref.shape, np.nan, dtype=np.float32)
+            reproject(source, dest, src_nodata=np.nan, dst_nodata=np.nan,
+                      resampling=Resampling.bilinear, **kwargs)
+            bands[name] = dest
+        valid = np.zeros(ref.shape, dtype=np.uint8)
+        reproject(src.valid_mask.astype(np.uint8), valid, src_nodata=0,
+                  dst_nodata=0, resampling=Resampling.nearest, **kwargs)
+        qa = (valid == 0) | np.logical_or.reduce(
+            [~np.isfinite(v) for v in bands.values()])
+        return Tile(id=src.id + "_rs", sensor_id=src.sensor_id, bands=bands,
+                    gsd=ref.gsd, crs=ref.crs, transform=ref.transform,
+                    bounds=ref.bounds, ts=src.ts, qa_mask=qa, meta=src.meta)
     from scipy.ndimage import zoom
 
     sh, sw = src.shape
@@ -580,7 +636,7 @@ class TileCache:
             stat = f"{p.stat().st_mtime_ns}:{p.stat().st_size}"
         except OSError:
             stat = "0:0"
-        blob = f"{p.resolve()}|{stat}|{sorted(params.items())}"
+        blob = f"v2|{p.resolve()}|{stat}|{sorted(params.items())}"
         return hashlib.sha256(blob.encode()).hexdigest()[:24]
 
     def get(self, path, **params) -> Optional[IngestResult]:
@@ -595,13 +651,15 @@ class TileCache:
 
     def put(self, path, result: IngestResult, **params) -> None:
         f = self.root / f"{self._key(path, **params)}.pkl"
-        tmp = f.with_suffix(".tmp")
+        tmp = None
         try:
-            with open(tmp, "wb") as fh:
+            with tempfile.NamedTemporaryFile(dir=self.root, suffix=".tmp", delete=False) as fh:
+                tmp = Path(fh.name)
                 pickle.dump(result, fh, protocol=pickle.HIGHEST_PROTOCOL)
             os.replace(tmp, f)
         except Exception:
-            tmp.unlink(missing_ok=True)
+            if tmp is not None:
+                tmp.unlink(missing_ok=True)
 
     def ingest_cached(self, path, **kwargs) -> IngestResult:
         hit = self.get(path, **kwargs)

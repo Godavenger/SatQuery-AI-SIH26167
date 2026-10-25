@@ -189,11 +189,16 @@ class SAREncoder(nn.Module):
     on Sentinel-1 from torchgeo (SENTINEL1_ALL_MOCO).
     """
 
-    def __init__(self, feat_dim: int = 2048):
+    def __init__(self, feat_dim: int = 2048, pretrained: bool = True):
         super().__init__()
         try:
-            import torchgeo.models as tgm
-            base = tgm.resnet50(weights=tgm.ResNet50_Weights.SENTINEL1_ALL_MOCO)
+            if pretrained:
+                import torchgeo.models as tgm
+                base = tgm.resnet50(weights=tgm.ResNet50_Weights.SENTINEL1_ALL_MOCO)
+            else:
+                from torchvision.models import resnet50
+                base = resnet50(weights=None)
+                base.conv1 = nn.Conv2d(2, 64, 7, stride=2, padding=3, bias=False)
             # strip the classification head
             layers = list(base.children())[:-1]
             self.encoder = nn.Sequential(*layers)
@@ -238,25 +243,30 @@ class AdaptedBackbone(nn.Module):
 
     FEAT_DIM = 2048
 
-    def __init__(self):
+    def __init__(self, pretrained: bool = True):
         super().__init__()
         self.band_proj = BandProjector()
         self.gsd_cond = GSDConditioner(feat_dim=self.FEAT_DIM)
-        self.sar_enc = SAREncoder(feat_dim=self.FEAT_DIM)
+        self.sar_enc = SAREncoder(feat_dim=self.FEAT_DIM, pretrained=pretrained)
         self._weights_hash: Optional[str] = None
 
         # Load the optical encoder.
         try:
-            import torchgeo.models as tgm
-            base = tgm.resnet50(weights=tgm.ResNet50_Weights.SENTINEL2_ALL_MOCO)
+            if pretrained:
+                import torchgeo.models as tgm
+                base = tgm.resnet50(weights=tgm.ResNet50_Weights.SENTINEL2_ALL_MOCO)
+            else:
+                from torchvision.models import resnet50
+                base = resnet50(weights=None)
             # patch the first conv to accept 12 channels instead of 13
             old = base.conv1
             new_conv = nn.Conv2d(
                 12, old.out_channels, old.kernel_size, old.stride,
                 old.padding, bias=False)
             # copy the first 12 channels of the original weights
-            with torch.no_grad():
-                new_conv.weight.copy_(old.weight[:, :12])
+            if pretrained:
+                with torch.no_grad():
+                    new_conv.weight.copy_(old.weight[:, :12])
             base.conv1 = new_conv
             layers = list(base.children())[:-1]
             self.opt_enc = nn.Sequential(*layers)
@@ -444,7 +454,9 @@ def get_backbone(device: Optional[str] = None,
         if default.exists():
             checkpoint = default
 
-    backbone = AdaptedBackbone()
+    # Loading a complete local checkpoint needs architecture only. Fetching
+    # SSL weights first made offline startup depend on external caches.
+    backbone = AdaptedBackbone(pretrained=checkpoint is None)
     backbone.checkpoint_path: Optional[str] = None            # type: ignore[attr-defined]
     backbone.checkpoint_hash: Optional[str] = None            # type: ignore[attr-defined]
 
@@ -457,10 +469,9 @@ def get_backbone(device: Optional[str] = None,
         # strict=False will happily load nothing at all if the key names ever
         # drift, which would silently downgrade every answer to SSL-only
         # weights. Say so instead of pretending the fine-tune is live.
-        if len(incompat.missing_keys) > len(list(backbone.state_dict())) // 2:
-            print(f"[backbone] WARNING: {len(incompat.missing_keys)} keys "
-                  f"missing from {Path(checkpoint).name}; the fine-tuned "
-                  "weights are probably NOT loaded")
+        if incompat.missing_keys:
+            raise RuntimeError(f"Incomplete backbone checkpoint: {len(incompat.missing_keys)} "
+                               f"required keys missing from {Path(checkpoint).name}")
         backbone._backbone_id = "resnet50-s2-moco-finetuned-eurosat"
         backbone.checkpoint_path = str(checkpoint)            # type: ignore[attr-defined]
         backbone.checkpoint_hash = _file_hash(checkpoint)     # type: ignore[attr-defined]

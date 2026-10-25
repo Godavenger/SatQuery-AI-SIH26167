@@ -26,6 +26,7 @@ import abc
 import re
 import hashlib
 import time
+from dataclasses import replace
 from typing import Any, Optional
 
 import numpy as np
@@ -169,7 +170,7 @@ def _classify(tile: Tile) -> dict[str, np.ndarray]:
 
     if ndwi is not None:
         masks["water"] = (ndwi > 0.10) & valid
-    elif _band(tile, "VV") is not None:
+    elif _band(tile, "VV", "HH") is not None:
         m = _sar_water(tile)
         if m is not None:
             masks["water"] = m & valid
@@ -223,7 +224,8 @@ def _boxes_from_mask(mask: np.ndarray, tile: Tile,
         if len(xs) < min_area_px:
             continue
         x0, y0, x1, y1 = int(xs.min()), int(ys.min()), int(xs.max()), int(ys.max())
-        geo = tile.box_to_geo(x0, y0, x1 - x0 + 1, y1 - y0 + 1)
+        geo = (tile.box_to_geo(x0, y0, x1 - x0 + 1, y1 - y0 + 1)
+               if tile.crs and tile.transform else {})
         boxes.append({
             "x0": x0, "y0": y0, "x1": x1, "y1": y1,
             "area_px": int(len(xs)), **geo,
@@ -641,6 +643,13 @@ class VQAHead(SpecialistBase):
                 neural = _neural_sar_presence(tile, target)
                 scorer = None
             spec = stats.get(target)
+            if target not in _classify(tile) and neural is None and scorer is None:
+                return TaskResult(
+                    text=f"The available bands cannot determine whether {target.replace('_', ' ')} is present.",
+                    confidence=0.0, abstained=True, output_kind="categorical",
+                    model_id=self.model_id, model_version=self.model_version,
+                    weights_hash=self.weights_hash,
+                    raw={"target": target, "reason": "required spectral bands and trained head unavailable"})
             present, text, conf, verdict = _reconcile(
                 target, neural, spec, scorer)
             raw = {"neural": neural, "spectral": spec or {},
@@ -816,10 +825,10 @@ class CaptionHead(SpecialistBase):
         ndwi = _ndwi(tile)
         notes = []
         if ndvi is not None:
-            mean_ndvi = float(np.nanmean(ndvi))
+            mean_ndvi = float(np.nanmean(ndvi[tile.valid_mask]))
             notes.append(f"mean NDVI {mean_ndvi:.2f}")
         if ndwi is not None:
-            mean_ndwi = float(np.nanmean(ndwi))
+            mean_ndwi = float(np.nanmean(ndwi[tile.valid_mask]))
             notes.append(f"NDWI {mean_ndwi:.2f}")
 
         sensor_label = tile.sensor_id.replace("_", " ")
@@ -1032,9 +1041,25 @@ class ChangeHead(SpecialistBase):
     def run(self, tiles: list[Tile], slots: Slots,
             params: dict[str, Any]) -> TaskResult:
         t1, t2 = tiles[0], tiles[1]
+        common_valid = t1.valid_mask & t2.valid_mask
+        if not common_valid.any():
+            return TaskResult(text="No pixels are usable at both acquisition dates.",
+                              confidence=0.0, abstained=True, model_id=self.model_id,
+                              model_version=self.model_version, weights_hash=self.weights_hash)
+        # Compare identical observed areas; clouds at one date must not look
+        # like land-cover loss or gain at the other date.
+        t1 = replace(t1, qa_mask=~common_valid)
+        t2 = replace(t2, qa_mask=~common_valid)
         dead_band = params.get("dead_band", 0.02)
         cva_thresh = params.get("cva_thresh", 1.5)
         effective_intent = params.get("_effective_intent", "change")
+        interval_days = None
+        try:
+            from datetime import datetime
+            interval_days = abs((datetime.fromisoformat(str(t2.ts))
+                                 - datetime.fromisoformat(str(t1.ts))).days)
+        except (TypeError, ValueError):
+            pass
 
         stats1 = _class_stats(t1)
         stats2 = _class_stats(t2)
@@ -1103,10 +1128,10 @@ class ChangeHead(SpecialistBase):
             return TaskResult(text=text, visual=vis, confidence=conf,
                               raw={"deltas": deltas, "changed_pct": round(changed_pct, 2),
                                    "changed_ha": round(changed_ha, 1),
-                                   "interval_days": abs((d2 - d1).days)
-                                   if "d1" in locals() and "d2" in locals() else None},
+                                   "interval_days": interval_days},
                               model_id=self.model_id, model_version=self.model_version,
-                              weights_hash=self.weights_hash, output_kind="categorical")
+                              weights_hash=self.weights_hash, output_kind="categorical",
+                              abstained=bool(target and target not in deltas))
 
         # -- change description mode ------------------------------------
         lines = []
@@ -1114,7 +1139,6 @@ class ChangeHead(SpecialistBase):
             if abs(d["delta_pct"]) >= 1.0:
                 lines.append(f"{cls.replace('_', ' ')} {d['verdict']} "
                              f"({d['t1_pct']:.1f}% -> {d['t2_pct']:.1f}%)")
-        interval_days = None
         if lines:
             interval = ""
             try:
@@ -1160,11 +1184,17 @@ class ChangeHead(SpecialistBase):
             a2 = t2.bands[slot].astype(np.float32)
             vecs.append((a2 - a1) ** 2)
         mag = np.sqrt(sum(vecs) / len(vecs))
-        p90 = float(np.percentile(mag, 90))
+        valid = t1.valid_mask & t2.valid_mask & np.isfinite(mag)
+        if not valid.any():
+            return np.zeros(t1.shape, dtype=np.float32)
+        p90 = float(np.percentile(mag[valid], 90))
         if p90 < 1e-8:
-            return np.zeros_like(mag)
+            changed = mag[valid & (mag > 1e-8)]
+            if not changed.size:
+                return np.zeros_like(mag)
+            p90 = float(np.percentile(changed, 90))
         norm = mag / p90
-        return (norm > thresh / 3.0).astype(np.float32)
+        return ((norm > thresh / 3.0) & valid).astype(np.float32)
 
 
 # --------------------------------------------------------------------------
@@ -1202,13 +1232,16 @@ class FuseHead(SpecialistBase):
         ndwi = _ndwi(opt)
         if sar_water is not None and ndwi is not None:
             opt_water = ndwi > 0.10
-            class_masks["water"] = (
-                (sar_weight * sar_water.astype(np.float32) +
-                 (1 - sar_weight) * opt_water.astype(np.float32)) > 0.45)
+            opt_weight = (1 - sar_weight) * opt.valid_mask
+            radar_weight = sar_weight * sar.valid_mask
+            weight = opt_weight + radar_weight
+            score = np.divide(radar_weight * sar_water + opt_weight * opt_water,
+                              weight, out=np.zeros(opt.shape), where=weight > 0)
+            class_masks["water"] = (score > 0.45) & (weight > 0)
         elif sar_water is not None:
-            class_masks["water"] = sar_water
+            class_masks["water"] = sar_water & sar.valid_mask
         elif ndwi is not None:
-            class_masks["water"] = ndwi > 0.10
+            class_masks["water"] = (ndwi > 0.10) & opt.valid_mask
 
         # Built-up and vegetation from optical
         opt_masks = _classify(opt)
@@ -1243,7 +1276,8 @@ class FuseHead(SpecialistBase):
                      legend=legend)
 
         # If the optical quality mask is poor, name the SAR contribution.
-        sar_carried = (opt.clear_fraction < 0.60 and sar_water is not None)
+        sar_carried = bool(np.any(class_masks.get("water", False)
+                                  & ~opt.valid_mask & sar.valid_mask))
         text = ("Optical+SAR fusion result. Classes detected: " +
                 ", ".join(f"{k.replace('_', ' ')} {v['pct']:.1f}%"
                           for k, v in fracs.items()) + ".")

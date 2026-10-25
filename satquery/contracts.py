@@ -81,7 +81,7 @@ class Tile:
     bands: dict[str, np.ndarray]
     gsd: float                              # metres per pixel
     crs: Optional[str] = None
-    transform: Optional[tuple[float, ...]] = None   # affine, GDAL order
+    transform: Optional[tuple[float, ...]] = None   # affine (a, b, c, d, e, f)
     bounds: Optional[tuple[float, float, float, float]] = None  # W,S,E,N
     ts: Optional[str] = None                # ISO-8601 acquisition timestamp
     qa_mask: Optional[np.ndarray] = None    # True where cloud/shadow/nodata
@@ -158,15 +158,21 @@ class Tile:
         if not self.transform:
             return (float(col), float(row))
         a, b, c, d, e, f = self.transform[:6]
-        return (a * col + b * row + c, d * col + e * row + f)
+        x, y = a * col + b * row + c, d * col + e * row + f
+        if self.crs:
+            from rasterio.warp import transform
+            xs, ys = transform(self.crs, "EPSG:4326", [x], [y])
+            return float(xs[0]), float(ys[0])
+        return float(x), float(y)
 
     def box_to_geo(self, x: float, y: float, w: float, h: float) -> dict[str, float]:
         """Convert a pixel box to a geographic box (section 5.3, grounding)."""
-        lon0, lat0 = self.pixel_to_geo(x, y)
-        lon1, lat1 = self.pixel_to_geo(x + w, y + h)
+        corners = [self.pixel_to_geo(cx, cy) for cx, cy in
+                   ((x, y), (x + w, y), (x, y + h), (x + w, y + h))]
+        lons, lats = zip(*corners)
         return {
-            "west": min(lon0, lon1), "east": max(lon0, lon1),
-            "south": min(lat0, lat1), "north": max(lat0, lat1),
+            "west": min(lons), "east": max(lons),
+            "south": min(lats), "north": max(lats),
         }
 
     # -- identity ---------------------------------------------------------
@@ -177,9 +183,12 @@ class Tile:
         h = hashlib.sha256()
         h.update(self.sensor_id.encode())
         h.update(f"{self.gsd:.6f}".encode())
+        h.update(str((self.crs, self.transform, self.ts)).encode())
         for slot in sorted(self.bands):
             h.update(slot.encode())
+            h.update(str((self.bands[slot].shape, self.bands[slot].dtype)).encode())
             h.update(np.ascontiguousarray(self.bands[slot]).tobytes())
+        h.update(np.ascontiguousarray(self.valid_mask).tobytes())
         return h.hexdigest()[:16]
 
     def describe(self) -> dict[str, Any]:
@@ -583,10 +592,10 @@ def _jsonable(obj: Any) -> Any:
     if isinstance(obj, (np.floating, float)):
         v = float(obj)
         return None if (np.isnan(v) or np.isinf(v)) else round(v, 6)
-    if isinstance(obj, (np.integer, int)):
-        return int(obj)
     if isinstance(obj, (np.bool_, bool)):
         return bool(obj)
+    if isinstance(obj, (np.integer, int)):
+        return int(obj)
     return obj
 
 
