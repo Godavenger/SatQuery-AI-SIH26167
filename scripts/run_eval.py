@@ -148,7 +148,8 @@ def run_eval(queries: list, site: str = "assam", verbose: bool = True) -> dict:
                   f"{'ABSTAINED' if pipeline_abstained else 'answered'}")
 
     if not results:
-        return {"error": "no results"}
+        return {"error": "No mission imagery found. Install the runtime bundle or fetch data first.",
+                "n_queries": 0, "site": site}
 
     v1_acc = sum(r["v1_correct"] for r in results) / len(results)
     v2_acc = sum(r["v2_correct"] for r in results) / len(results)
@@ -169,6 +170,8 @@ def run_eval(queries: list, site: str = "assam", verbose: bool = True) -> dict:
         "router_v2_accuracy": round(v2_acc, 3),
         "router_improvement": round(v2_acc - v1_acc, 3),
         "pipeline_accuracy_on_answered": round(pipe_acc, 3),
+        "metric_definition": "pipeline_accuracy_on_answered measures intent agreement, not answer correctness",
+        "pipeline_errors": sum(r["pipeline_intent"] == "error" for r in results),
         "abstention_rate": round(1.0 - len(answered) / max(len(results), 1), 3),
         "site": site,
         "confusion_matrix_v2": cm,
@@ -186,8 +189,8 @@ def print_scorecard(sc: dict) -> None:
     print(f"Router v1 accuracy:      {sc.get('router_v1_accuracy', 0):.1%}")
     print(f"Router v2 accuracy:      {sc.get('router_v2_accuracy', 0):.1%}  "
           f"(+{sc.get('router_improvement', 0):.1%} improvement)")
-    print(f"Pipeline accuracy:       {sc.get('pipeline_accuracy_on_answered', 0):.1%}  "
-          f"(on answered queries)")
+    print(f"Pipeline intent match:   {sc.get('pipeline_accuracy_on_answered', 0):.1%}  "
+          f"(on answered queries; not answer accuracy)")
     print(f"Abstention rate:         {sc.get('abstention_rate', 0):.1%}")
 
     cm = sc.get("confusion_matrix_v2", {})
@@ -209,7 +212,7 @@ def main():
                     help="Run only the five representative PS queries")
     ap.add_argument("--site", default="assam",
                     help="Which manifest site to use for pixel data")
-    ap.add_argument("--out", default="data/scorecard.json",
+    ap.add_argument("--out", default="data/runs/scorecard.json",
                     help="Where to write the JSON scorecard")
     args = ap.parse_args()
 
@@ -217,13 +220,16 @@ def main():
 
     print(f"Running {len(queries)} queries on site={args.site}...")
     sc = run_eval(queries, site=args.site, verbose=True)
+    if sc.get("error"):
+        print(sc["error"], file=sys.stderr)
+        return 1
     print_scorecard(sc)
 
     out = ROOT / args.out
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(sc, indent=2, default=str))
     print(f"\nScorecard saved -> {out}")
-    return 0
+    return 1 if sc.get("pipeline_errors") else 0
 
 
 if __name__ == "__main__":
